@@ -1,0 +1,25 @@
+/* Importa a fonte global */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+
+/* Estilos globais */
+body {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-family: 'Press Start 2P', cursive; /* Fonte global */
+  user-select: none;
+  background-color: #f0f0f0; /* Cor de fundo padrão */
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #e0e0e0; /* Cor de fundo do container principal */
+}
+
+
+
+/* Outros estilos globais que você achar necessário */
