@@ -1,10 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './FlappyBirdGame.css';
 import ModalGameOver from '../ModalGameOver/ModalGameOver';
+import { useTranslation } from 'react-i18next';
+import { positions } from '@mui/system';
+const languageBrowser = navigator.language || navigator.userLanguage;
 
 const FlappyBirdGame = () => {
   const [open, setOpen] = useState(false);
   const [currentModal, setCurrentModal] = useState(0); // Define o estado inicial como 0
+  const { t } = useTranslation();
+
+  const positionScreen = languageBrowser == "pt-BR" ? 57 : 90
+  const positionScreenTwo = languageBrowser == "pt-BR" ? 70 : 85
 
   const canvasRef = useRef(null);
   const audioContextRef = useRef(null);
@@ -110,13 +117,13 @@ const FlappyBirdGame = () => {
       } else {
         ctx.drawImage(img, 432, Math.floor((index % 9) / 3) * size[1], ...size, ((canvas.width / 2) - size[0] / 2), flyHeight, ...size);
         flyHeight = (canvas.height / 2) - (size[1] / 2);
-        ctx.fillText(`Best score : ${bestScore}`, 85, 245);
-        ctx.fillText('Click to play', 90, 535);
+        ctx.fillText(`${t("Best score")} : ${bestScore}`, positionScreenTwo, 245);
+        ctx.fillText(`${t("Click to play")}`, positionScreen, 535);
         ctx.font = "bold 30px courier";
       }
 
-      document.getElementById('bestScore').innerHTML = `Best: ${bestScore}`;
-      document.getElementById('currentScore').innerHTML = `Current: ${currentScore}`;
+      document.getElementById('bestScore').innerHTML = `${t("Best")}: ${bestScore}`;
+      document.getElementById('currentScore').innerHTML = `${t("Current")}: ${currentScore}`;
 
       window.requestAnimationFrame(render);
     };

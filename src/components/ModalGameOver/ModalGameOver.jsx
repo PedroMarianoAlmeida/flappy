@@ -9,13 +9,14 @@ import style from './ModalGameOver.module.css'
 import { useState } from 'react';
 import useConnect from '../../hooks/useConnect';
 import TableRank from '../TableRank';
+import { useTranslation } from 'react-i18next';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ModalGameOver({ currentModal, open, setOpen, status, setOpenDesktop }) {
-
+export default function ModalGameOver({ currentModal, open, setOpen, status, setOpenDesktop, }) {
+    const { t } = useTranslation();
     const [saveScore, setSaveScore] = useState(status ? "Rank" : "options");
     const [email, setEmail] = useState("");
     const { loading, addDocument } = useConnect('Data');
@@ -39,8 +40,8 @@ export default function ModalGameOver({ currentModal, open, setOpen, status, set
                 aria-describedby="alert-dialog-slide-description"
             >
                 {saveScore !== "Rank" ?
-                    <DialogTitle>{`Your Score: ${currentModal}`}</DialogTitle> :
-                    <DialogTitle>{`Rank Mundial`}</DialogTitle>
+                    <DialogTitle>{`${t("Your Score")}: ${currentModal}`}</DialogTitle> :
+                    <DialogTitle>{`${t("Rank")}`}</DialogTitle>
                 }
                 <DialogContent className={style.DialogContent}>
                     {saveScore === "options" &&
@@ -50,7 +51,7 @@ export default function ModalGameOver({ currentModal, open, setOpen, status, set
                                 variant="contained"
                                 onClick={() => setOpen(false)}
                             >
-                                Jogar Novamente
+                                {t("Play again")}
                             </Button>
 
                             <Button
@@ -58,7 +59,7 @@ export default function ModalGameOver({ currentModal, open, setOpen, status, set
                                 variant="contained"
                             // onClick={}
                             >
-                                Compartilhar
+                                {t("To share")}
                             </Button>
 
                             <Button
@@ -66,7 +67,7 @@ export default function ModalGameOver({ currentModal, open, setOpen, status, set
                                 variant="contained"
                                 onClick={() => setSaveScore("save")}
                             >
-                                Salvar Score
+                                {t("Save Score")}
                             </Button>
 
                         </>
@@ -83,7 +84,7 @@ export default function ModalGameOver({ currentModal, open, setOpen, status, set
                                     margin="dense"
                                     id="name"
                                     name="email"
-                                    label="Email Address"
+                                    label="Email"
                                     type="email"
                                     fullWidth
                                     variant="standard"
@@ -94,7 +95,7 @@ export default function ModalGameOver({ currentModal, open, setOpen, status, set
                                     className={style.Button}
                                     variant="contained"
                                 >
-                                    Salvar
+                                    {t("Save")}
                                 </Button>}
 
                                 {loading && <Button
@@ -102,29 +103,30 @@ export default function ModalGameOver({ currentModal, open, setOpen, status, set
                                     type='submit'
                                     variant="contained"
                                 >
-                                    Aguarde...
+                                    {t("Wait")}...
                                 </Button>}
 
                                 <Button
                                     type='button'
                                     onClick={() => setSaveScore("options")}
                                 >
-                                    Voltar
+                                    {t("Back")}
                                 </Button>
 
                             </form>
                         </>
                     }
                     {saveScore === 'Rank' &&
-                        <>
+                        <div className={style.divRank}>
                             <TableRank />
                             <Button
                                 type='button'
                                 onClick={() => setOpenDesktop(false)}
                             >
-                                Voltar
+                                {t("Back")}
                             </Button>
-                        </>
+
+                        </div>
                     }
 
                 </DialogContent>

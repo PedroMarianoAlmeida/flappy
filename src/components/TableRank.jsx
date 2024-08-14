@@ -7,9 +7,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import useConnect from '../hooks/useConnect';
+import { useTranslation } from 'react-i18next';
 
 export default function TableRank() {
     const { data } = useConnect('Data');
+    const { t } = useTranslation();
 
     return (
         <div className="table-responsive">
@@ -17,9 +19,9 @@ export default function TableRank() {
                 <Table  aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell className='title-table' align="center">Position</TableCell>
+                            <TableCell className='title-table' align="center">{t("Position")}</TableCell>
                             <TableCell className='title-table'align="center">E-mail</TableCell>
-                            <TableCell className='title-table'align="center">Score</TableCell>
+                            <TableCell className='title-table'align="center">{t("Score")}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

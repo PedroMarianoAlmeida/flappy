@@ -12,13 +12,15 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import TableRank from '../TableRank';
+import { useTranslation } from 'react-i18next';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function FullScreenDialog({ open, closeModal }) {
-;
+  const { t } = useTranslation();
+
   return (
     <React.Fragment>
       <Dialog
@@ -38,13 +40,12 @@ export default function FullScreenDialog({ open, closeModal }) {
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Rank
+              {t("Rank")}
             </Typography>
           </Toolbar>
         </AppBar>
         <List>
           <TableRank />
-        
         </List>
       </Dialog>
     </React.Fragment>
