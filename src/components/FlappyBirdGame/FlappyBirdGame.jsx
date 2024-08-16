@@ -2,13 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import './FlappyBirdGame.css';
 import ModalGameOver from '../ModalGameOver/ModalGameOver';
 import { useTranslation } from 'react-i18next';
-const languageBrowser = navigator.language || navigator.userLanguage;
 
 const FlappyBirdGame = () => {
   const [open, setOpen] = useState(false);
   const [currentModal, setCurrentModal] = useState(0);
   const { t } = useTranslation();
-
+  const languageBrowser = navigator.language || navigator.userLanguage;
   const positionScreen = languageBrowser === "pt-BR" ? 57 : 90;
   const positionScreenTwo = languageBrowser === "pt-BR" ? 70 : 85;
 
@@ -52,11 +51,11 @@ const FlappyBirdGame = () => {
     const cTenth = canvas.width / 10;
 
     let index = 0,
-      bestScore = 0,
-      flight,
-      flyHeight,
-      currentScore = 0,
-      pipes;
+        bestScore = 0,
+        flight,
+        flyHeight,
+        currentScore = 0,
+        pipes;
 
     const pipeWidth = 78;
     const pipeGap = 200;
@@ -74,8 +73,9 @@ const FlappyBirdGame = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Movimentação do fundo
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -((index * (speed / 2)) % canvas.width) + canvas.width, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -(index * (speed / 2)) % canvas.width, 0, canvas.width, canvas.height);
+      const offsetX = (index * (speed / 2)) % canvas.width;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -offsetX + canvas.width, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -offsetX, 0, canvas.width, canvas.height);
 
       if (gamePlaying) {
         pipes.forEach(pipe => {
@@ -94,14 +94,11 @@ const FlappyBirdGame = () => {
             source.start();
           }
 
-          // Condições de colisão
-          if ([
-            pipe[0] <= cTenth + size[0],
-            pipe[0] + pipeWidth >= cTenth,
-            pipe[1] > flyHeight || pipe[1] + pipeGap < flyHeight + size[1]
-          ].every(elem => elem)) {
+          if (pipe[0] <= cTenth + size[0] &&
+              pipe[0] + pipeWidth >= cTenth &&
+              (pipe[1] > flyHeight || pipe[1] + pipeGap < flyHeight + size[1])) {
             setCurrentModal(currentScore);
-            setOpen(true); // Abre o modal
+            setOpen(true);
             gamePlaying = false;
             setup();
             const loseSource = audioContextRef.current.createBufferSource();
@@ -112,23 +109,13 @@ const FlappyBirdGame = () => {
         });
       }
 
-      // Só desenha o pássaro quando o jogo está em andamento
       if (gamePlaying) {
-        ctx.save(); // Salva o estado atual do contexto
-
-        // Calcula a inclinação baseada na velocidade do voo
-        const angle = Math.min(Math.max(flight * 0.03, -Math.PI / 6), Math.PI / 3); // Limita o ângulo entre -30º e 60º
-
-        // Translada o contexto para a posição do pássaro
+        ctx.save();
+        const angle = Math.min(Math.max(flight * 0.03, -Math.PI / 6), Math.PI / 3);
         ctx.translate(cTenth + size[0] / 2, flyHeight + size[1] / 2);
-
-        // Aplica a rotação
         ctx.rotate(angle);
-
-        // Desenha o pássaro inclinado
         ctx.drawImage(img, 432, Math.floor((index % 9) / 3) * size[1], ...size, -size[0] / 2, -size[1] / 2, ...size);
-
-        ctx.restore(); // Restaura o estado original do contexto
+        ctx.restore();
 
         flight += gravity;
         flyHeight = Math.min(flyHeight + flight, canvas.height - size[1]);
