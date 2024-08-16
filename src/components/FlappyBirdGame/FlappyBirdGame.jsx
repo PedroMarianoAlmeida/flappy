@@ -17,7 +17,6 @@ const FlappyBirdGame = () => {
   const scoreSoundBufferRef = useRef(null);
   const loseSoundBufferRef = useRef(null);
   const startSoundBufferRef = useRef(null);
-  const [widthUser, setWidthUser] = useState(window.innerWidth);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -44,21 +43,21 @@ const FlappyBirdGame = () => {
 
     let gamePlaying = false;
     const gravity = 0.7;
-    const baseSpeed = 1.9; // Velocidade base
-    const speed = (widthUser / 800) * baseSpeed; // Ajusta a velocidade com base na largura da tela
+    const baseSpeed = 2.9; // Velocidade base
     const size = [51, 36];
     const jump = -9.5;
     const cTenth = canvas.width / 10;
-
-    let index = 0,
-        bestScore = 0,
-        flight,
-        flyHeight,
-        currentScore = 0,
-        pipes;
-
     const pipeWidth = 78;
     const pipeGap = 200;
+
+    let lastTime = 0;
+    let index = 0;
+    let bestScore = 0;
+    let flight;
+    let flyHeight;
+    let currentScore = 0;
+    let pipes;
+
     const pipeLoc = () => (Math.random() * ((canvas.height - (pipeGap + pipeWidth)) - pipeWidth)) + pipeWidth;
 
     const setup = () => {
@@ -68,18 +67,22 @@ const FlappyBirdGame = () => {
       pipes = Array(3).fill().map((_, i) => [canvas.width + (i * (pipeGap + pipeWidth)), pipeLoc()]);
     };
 
-    const render = () => {
+    const render = (time) => {
+      if (!lastTime) lastTime = time;
+      const deltaTime = time - lastTime;
+      lastTime = time;
+
       index++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Movimentação do fundo
-      const offsetX = (index * (speed / 2)) % canvas.width;
+      const offsetX = (index * (baseSpeed / 2)) % canvas.width;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -offsetX + canvas.width, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height, -offsetX, 0, canvas.width, canvas.height);
 
       if (gamePlaying) {
         pipes.forEach(pipe => {
-          pipe[0] -= speed;
+          pipe[0] -= baseSpeed * (deltaTime / 16); // Ajusta a velocidade com base no tempo
           ctx.drawImage(img, 432, 588 - pipe[1], pipeWidth, pipe[1], pipe[0], 0, pipeWidth, pipe[1]);
           ctx.drawImage(img, 432 + pipeWidth, 108, pipeWidth, canvas.height - pipe[1] + pipeGap, pipe[0], pipe[1] + pipeGap, pipeWidth, canvas.height - pipe[1] + pipeGap);
 
@@ -133,7 +136,7 @@ const FlappyBirdGame = () => {
     };
 
     setup();
-    img.onload = render;
+    img.onload = () => window.requestAnimationFrame(render);
 
     const handleClick = () => {
       if (!gamePlaying) {
@@ -176,15 +179,6 @@ const FlappyBirdGame = () => {
     return () => {
       canvas.removeEventListener('click', handleClick);
       window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [widthUser]);
-
-  useEffect(() => {
-    const handleResize = () => setWidthUser(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
