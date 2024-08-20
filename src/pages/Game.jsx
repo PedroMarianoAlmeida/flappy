@@ -350,16 +350,22 @@ const Game = () => {
     let screenActive = screens.start;
 
     const loop = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      screenActive.draw();
-      if (screenActive.update) {
+      const now = performance.now();
+      const deltaTime = now - lastFrameTime;
+      lastFrameTime = now;
+    
+      if (deltaTime > frameInterval) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         screenActive.update();
+        screenActive.draw();
+        frames++;
       }
-      frames += 1;
+    
       requestAnimationFrame(loop);
     };
-
+    
+    let lastFrameTime = performance.now();
+    const frameInterval = 1000 / 100; // 100 FPS
     const handleClick = () => {
       if (screenActive.click) {
         screenActive.click();
