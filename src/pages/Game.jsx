@@ -295,7 +295,7 @@ const Game = () => {
           if (passed100Frames) {
             this.pairs.push({
               x: canvas.width,
-              y: -150 * (Math.random() * (Math.random() * 2.5) + 1),
+              y: -150 * (Math.random() * (Math.random() * 2) + 1),
             });
           }
           this.pairs.forEach((pair, index) => {
