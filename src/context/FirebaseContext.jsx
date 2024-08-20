@@ -7,6 +7,7 @@ const FirebaseContext = createContext("");
 
 const FirebaseProvider = ({ children }) => {
     const [data, setData] = useState([]);
+    const [score, setScore] = useState(0);
     const fetchData = useCallback(async (collectionName) => {
         try {
 
@@ -28,7 +29,9 @@ const FirebaseProvider = ({ children }) => {
         <FirebaseContext.Provider
             value={{
                 data,
-                fetchData
+                fetchData,
+                score, 
+                setScore
             }}
         >
             {children}

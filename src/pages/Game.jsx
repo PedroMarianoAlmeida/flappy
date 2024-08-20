@@ -1,8 +1,11 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
 import spriteSheet from '../assets/sheet.png';
+import { FirebaseContext } from '../context/FirebaseContext';
 
 const Game = () => {
+  const { score, setScore } = useContext(FirebaseContext);
   const canvasRef = useRef(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 431, height: 600 });
   const sprites = new Image();
   sprites.src = spriteSheet;
 
@@ -13,11 +16,27 @@ const Game = () => {
   };
 
   useEffect(() => {
+    const updateCanvasSize = () => {
+      const width = window.innerWidth < 431 ? window.innerWidth : 431;
+      setCanvasSize({ width, height: 600 }); // Define a altura do canvas aqui
+    };
+
+    updateCanvasSize(); // Define o tamanho inicial do canvas
+
+    window.addEventListener('resize', updateCanvasSize);
+
+    return () => {
+      window.removeEventListener('resize', updateCanvasSize);
+    };
+  }, []);
+
+  useEffect(() => {
     let frames = 0;
+    let scorePassedPipes = 0; // Nova variável para contar os canos passados
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    canvas.width = 431;
-    canvas.height = 600;
+    canvas.width = canvasSize.width;
+    canvas.height = canvasSize.height;
 
     const newFlappyBird = () => {
       const wings = [
@@ -287,6 +306,13 @@ const Game = () => {
               changeScreen(screens.start);  // Encerra o jogo e volta para a tela inicial
             }
     
+            // Verifica se o Flappy Bird passou o cano e incrementa o placar
+            if (pair.x + this.width < globais.flappybird.x && !pair.passed) {
+              scorePassedPipes += 1;
+              setScore(scorePassedPipes); // Atualiza a pontuação no Firebase
+              pair.passed = true; // Marca o cano como passado
+            }
+    
             if (pair.x + this.width <= 0) {
               this.pairs.splice(index, 1);
             }
@@ -307,6 +333,22 @@ const Game = () => {
       }
     };
 
+    const createScore = () => {
+      const score = {
+        scores: 0,
+        draw() {
+          ctx.font = '35px "Press Start 2P"';
+          ctx.fillStyle = "white";
+          ctx.textAlign = "right";
+          ctx.fillText(`${this.scores}`, canvas.width - 35, 40);
+        },
+        update() {
+          this.scores = scorePassedPipes;
+        }
+      };
+      return score;
+    };
+
     const screens = {
       start: {
         initialize() {
@@ -314,6 +356,8 @@ const Game = () => {
           globais.floor = floor;
           globais.background = background;
           globais.pipes = createPipes();
+          globais.score = createScore(); // Inicializa o score
+          scorePassedPipes = 0; // Reseta o número de canos passados
         },
         draw() {
           globais.background.draw();
@@ -330,11 +374,15 @@ const Game = () => {
         },
       },
       game: {
+        initialize() {
+          globais.score = createScore(); // Inicializa o score
+        },
         draw() {
           globais.background.draw();
           globais.pipes.draw();
           globais.floor.draw();
           globais.flappybird.draw();
+          globais.score.draw(); // Desenha o score
         },
         click() {
           globais.flappybird.jumper();
@@ -343,6 +391,7 @@ const Game = () => {
           globais.floor.update();
           globais.pipes.update();
           globais.flappybird.update();
+          globais.score.update(); // Atualiza o score
         },
       },
     };
@@ -350,22 +399,16 @@ const Game = () => {
     let screenActive = screens.start;
 
     const loop = () => {
-      const now = performance.now();
-      const deltaTime = now - lastFrameTime;
-      lastFrameTime = now;
-    
-      if (deltaTime > frameInterval) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      screenActive.draw();
+      if (screenActive.update) {
         screenActive.update();
-        screenActive.draw();
-        frames++;
       }
-    
+      frames += 1;
       requestAnimationFrame(loop);
     };
-    
-    let lastFrameTime = performance.now();
-    const frameInterval = 1000 / 100; // 100 FPS
+
     const handleClick = () => {
       if (screenActive.click) {
         screenActive.click();
@@ -382,11 +425,11 @@ const Game = () => {
     return () => {
       canvas.removeEventListener('click', handleClick);
     };
-  }, []);
+  }, [canvasSize, setScore]); // Adicione 'canvasSize' e 'setScore' como dependências
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <canvas ref={canvasRef} className="border-2 bg-[#70c5ce]"></canvas>
+      <canvas ref={canvasRef} className="border-2 bg-[#70c5ce] "></canvas>
     </div>
   );
 };

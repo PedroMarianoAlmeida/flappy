@@ -36,10 +36,10 @@ function Navbar(props) {
                 className='flex items-center justify-center '
                 variant="h6"
                 sx={{ my: 2 }}>
-                <a href="/"><img
+                <Link href="/"><img
                     className='w-36'
                     src={Logo}
-                    alt="" /></a>
+                    alt="" /></Link>
             </Typography>
             <Divider
                 className='bg-slate-600'
@@ -48,7 +48,7 @@ function Navbar(props) {
                 {navItems.map((item) => (
                     <ListItem key={item} disablePadding>
                         <ListItemButton sx={{ textAlign: 'center', fontFamily: "Press Start 2P", color: "#fff" }}>
-                            <ListItemText primary={item} />
+                            <Link to={`/${item}`} className='w-full h-full '><ListItemText primary={item} /></Link>
                         </ListItemButton>
                     </ListItem>
                 ))}
