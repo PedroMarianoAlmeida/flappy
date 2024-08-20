@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
-import './App.css'; // Importa o CSS global
-import FlappyBirdHeader from './components/FlappyBirdHeader/FlappyBirdHeader';
-import FlappyBirdGame from './components/FlappyBirdGame/FlappyBirdGame';
-import { useTranslation } from 'react-i18next';
-
-const App = () => {
-  const { t } = useTranslation();
-
+import { Route, Routes } from 'react-router-dom'
+import './App.css'
+import Highscores from './pages/Highscores'
+import PageBasic from './pages/PageBasic'
+import Game from './pages/Game'
+function App() {
   return (
     <>
-      <FlappyBirdHeader t={t}/>
-      <FlappyBirdGame />
+      <Routes>
+        <Route path='/' element={<PageBasic />} >
+          <Route index element={<Game />} />
+          <Route path='/game' element={<Game />} />
+          <Route path='/highscores' element={<Highscores />} />
+          </Route>
+          </Routes>
     </>
-  );
-};
-
-export default App;
+  )
+}
+export default App
