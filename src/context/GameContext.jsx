@@ -8,7 +8,6 @@ const GameProvider = ({ children }) => {
     const canvasRef = useRef(null)
     const sprites = new Image();
     sprites.src = spriteSheet;
-    const globais = {};
     const collision = (flappybird, floor) => {
         const flappybirdY = flappybird.y + flappybird.height;
         const floorY = floor.y;

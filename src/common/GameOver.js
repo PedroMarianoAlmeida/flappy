@@ -4,8 +4,8 @@ export const renderMessageGamerOver = (canvas, ctx, sprites) => {
         spriteY: 272,
         width: 188,
         height: 38,
-        x: (canvas.width - 188) / 2,
-        y: 20, // Ajuste a posição vertical da mensagem
+        x: (canvas.width - 188) / 2, // Centraliza a mensagem
+        y: canvas.height / 4, // Coloca a mensagem no topo
         draw() {
             ctx.drawImage(
                 sprites,
@@ -21,21 +21,23 @@ export const renderMessageGamerOver = (canvas, ctx, sprites) => {
         },
     };
     return messageGamerOver;
-}
+};
 
 export const renderButtons = (canvas, ctx) => {
-    const buttonWidth = 90; // Largura do botão
-    const buttonHeight = 15; // Altura do botão
+    const buttonWidth = 100; // Largura do botão
+    const buttonHeight = 25; // Altura do botão
     const borderWidth1 = 4; // Largura da primeira borda
     const borderWidth2 = 2; // Largura da segunda borda
     const borderColor1 = '#553000ff'; // Cor da primeira borda
     const borderColor2 = '#fff'; // Cor da segunda borda
     const buttonPadding = 10; // Espaço entre os botões
+    const scoreboardHeight = 116; // Altura do placar
+    const spacingFromScoreboard = 20; // Espaço entre o placar e os botões
 
     // Botão "Jogar Novamente"
     const buttonRestart = {
         x: (canvas.width - (buttonWidth * 2 + buttonPadding)) / 2, // Centraliza o botão à esquerda
-        y: (canvas.height - buttonHeight) / 2 + 30, // Ajusta a posição vertical
+        y: (canvas.height - buttonHeight) / 2 + scoreboardHeight / 2 + spacingFromScoreboard, // Ajusta a posição vertical abaixo do placar
         width: buttonWidth,
         height: buttonHeight,
         draw() {
@@ -69,7 +71,7 @@ export const renderButtons = (canvas, ctx) => {
     // Botão "Salvar Pontuação"
     const buttonSaveScore = {
         x: buttonRestart.x + buttonWidth + buttonPadding, // Posiciona o botão à direita do primeiro botão
-        y: (canvas.height - buttonHeight) / 2 + 30, // Ajusta a posição vertical
+        y: (canvas.height - buttonHeight) / 2 + scoreboardHeight / 2 + spacingFromScoreboard, // Ajusta a posição vertical abaixo do placar
         width: buttonWidth,
         height: buttonHeight,
         draw() {
@@ -103,7 +105,7 @@ export const renderButtons = (canvas, ctx) => {
     // Botão "Compartilhar"
     const buttonToShare = {
         x: (canvas.width - (buttonWidth * 2 + buttonPadding)) / 2, // Centraliza o botão abaixo dos dois anteriores
-        y: (canvas.height - buttonHeight) / 2 + buttonHeight + buttonPadding * 2 + 30, // Posiciona abaixo dos dois botões
+        y: buttonRestart.y + buttonHeight + buttonPadding * 2, // Posiciona abaixo dos dois botões
         width: buttonWidth * 2 + buttonPadding, // Largura igual à soma dos dois botões
         height: buttonHeight,
         draw() {
@@ -157,3 +159,126 @@ export const renderButtons = (canvas, ctx) => {
 
     return { buttonRestart, buttonSaveScore, buttonToShare };
 };
+
+export const renderScoreboard = (canvas, ctx, sprites) => {
+    const scoreboard = {
+        spriteX: 276,
+        spriteY: 112,
+        width: 226,
+        height: 116,
+        x: (canvas.width - 226) / 2, // Centraliza o placar
+        y: canvas.height / 3, // Posiciona abaixo da mensagem de "Game Over"
+        draw() {
+            ctx.drawImage(
+                sprites,
+                this.spriteX,
+                this.spriteY,
+                this.width,
+                this.height,
+                this.x,
+                this.y,
+                this.width,
+                this.height
+            );
+        },
+    };
+    return scoreboard;
+};
+
+
+export const renderMedal = (canvas, ctx, sprites) => {
+    const medal = {
+        type:[
+            {name:"Platinum", spriteX:348, spriteY:228},
+            {name: "Silver", spriteX:396, spriteY:228},
+            {name:"Bronze",spriteX:396, spriteY:273},
+            {name:"Gold",spriteX: 348, spriteY:273}
+        ],
+        width: 44,
+        height: 44,
+        x: (canvas.width - 226) / 2, // Centraliza o placar
+        y: canvas.height / 3, // Posiciona abaixo da mensagem de "Game Over"
+        draw() {
+            ctx.drawImage(
+                sprites,
+                this.spriteX,
+                this.spriteY,
+                this.width,
+                this.height,
+                this.x,
+                this.y,
+                this.width,
+                this.height
+            );
+        },
+
+        updateCurrent(){
+
+        }
+    };
+    return medal;
+
+}
+
+export const createMedal = (canvas, scorePassedPipes, ctx, sprites) => {
+    const medal = {
+      type: [
+        { name: "Bronze", spriteX: 396, spriteY: 273 },
+        { name: "Silver", spriteX: 396, spriteY: 228 },
+        { name: "Gold", spriteX: 348, spriteY: 273 },
+        { name: "Platinum", spriteX: 348, spriteY: 228 },
+      ],
+      width: 44,
+      height: 44,
+      // Ajuste os valores para posicionar a medalha na tela
+      x: canvas.width * 0.75 - 195, // 75% da largura do canvas menos metade da largura da medalha
+      y: canvas.height * 0.5 - 57, // 50% da altura do canvas menos metade da altura da medalha
+      draw() {
+        const index = Math.min(Math.floor(scorePassedPipes / 10), this.type.length - 1); // Define o tipo de medalha
+        const { spriteX, spriteY } = this.type[index];
+        ctx.drawImage(
+          sprites,
+          spriteX,
+          spriteY,
+          this.width,
+          this.height,
+          this.x,
+          this.y,
+          this.width,
+          this.height
+        );
+      },
+    };
+    return medal;
+  };
+
+
+
+  export const currentScore = (canvas, ctx, score) => {
+    const scoreGameOver = {
+            spriteX: 118,
+            spriteY: 272,
+            width: 188,
+            height: 38,
+            x: (canvas.width - 188) / 2, // Centraliza a imagem do placar
+            y: canvas.height / 4, // Coloca a imagem do placar no topo
+            draw() {
+              // Configura o estilo do texto
+              ctx.font = 'bold 15px "Press Start 2P"'; // Fonte e tamanho do texto
+              ctx.textAlign = 'center'; // Alinha o texto no centro
+              ctx.textBaseline = 'middle'; // Alinha o texto verticalmente no meio
+              
+              // Primeiro desenha o contorno do texto
+              ctx.strokeStyle = "black";
+              ctx.lineWidth = 5;
+              ctx.strokeText(score, 290, 243);
+              
+              // Depois desenha o texto preenchido
+              ctx.fillStyle = '#FFFFFF'; // Cor do texto (branco)
+              ctx.fillText(score, 290, 243);
+            }
+          };
+
+    return scoreGameOver;
+};
+

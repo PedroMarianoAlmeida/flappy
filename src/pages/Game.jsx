@@ -1,14 +1,12 @@
-import { useRef, useEffect, useState, useContext } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import spriteSheet from '../assets/sheet.png';
-import { FirebaseContext } from '../context/FirebaseContext';
 import { renderBackground } from '../common/Background';
 import { renderHomeScreen, renderMessageHomeScreen } from '../common/HomeScreen';
-import { renderButtons, renderMessageGamerOver } from '../common/GameOver';
+import { createMedal, renderButtons, renderMessageGamerOver, renderScoreboard, currentScore } from '../common/GameOver';
 import { renderFloor } from '../common/Floor';
 
 const Game = () => {
-  const { score, setScore } = useContext(FirebaseContext);
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 431, height: 600 });
   const sprites = new Image();
@@ -208,6 +206,8 @@ const Game = () => {
               this.pairs.splice(index, 1);
             }
           });
+
+          console.log('Pontuação atualizada:', scorePassedPipes); // Adicionado para depuração
         },
       };
 
@@ -216,7 +216,7 @@ const Game = () => {
 
     const createScore = () => {
       const scoreObj = {
-        scores: score,
+        scores: scorePassedPipes,
         draw() {
           ctx.font = '35px "Press Start 2P"';
           ctx.strokeStyle = "black";
@@ -228,7 +228,6 @@ const Game = () => {
         },
         update() {
           this.scores = scorePassedPipes;
-          setScore(scorePassedPipes);
         }
       };
       return scoreObj;
@@ -295,6 +294,9 @@ const Game = () => {
           globais.floor = renderFloor(canvas, ctx, sprites);
           globais.messageGamerOver = renderMessageGamerOver(canvas, ctx, sprites);
           globais.renderButton = renderButtons(canvas, ctx, sprites);
+          globais.scoreboard = renderScoreboard(canvas, ctx, sprites);
+          globais.medal = createMedal(canvas, scorePassedPipes, ctx, sprites); // Adiciona a medalha
+          globais.scoreGameOver = currentScore(canvas, ctx, scorePassedPipes);
         },
         draw() {
           globais.background.draw();
@@ -303,6 +305,9 @@ const Game = () => {
           globais.renderButton.buttonRestart.draw();
           globais.renderButton.buttonSaveScore.draw();
           globais.renderButton.buttonToShare.draw();
+          globais.scoreboard.draw();
+          globais.medal.draw(); // Desenha a medalha
+          globais.scoreGameOver.draw(); // Desenha a pontuação
         },
         update() {
           // Atualiza apenas o que for necessário
@@ -323,22 +328,16 @@ const Game = () => {
     };
 
     const saveScore = () => {
-      // Salvar pontuação no Firebase ou localmente
-      console.log('Pontuação salva:', scorePassedPipes);
-
-      // Redirecionar para a página de high scores
-      navigate(`/highscores?score=${encodeURIComponent(scorePassedPipes)}`);
+      navigate(`/highscores?score=${scorePassedPipes}`);
     };
 
     const shareScore = () => {
-      // Função para compartilhar a pontuação
       if (navigator.share) {
         navigator.share({
           title: 'Minha Pontuação no Flappy Bird',
           text: `Minha pontuação é ${scorePassedPipes}!`,
         }).catch(console.error);
       } else {
-        // Caso o compartilhamento não seja suportado
         alert(`Minha pontuação é ${scorePassedPipes}!`);
       }
     };
