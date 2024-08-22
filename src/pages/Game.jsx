@@ -1,6 +1,11 @@
 import { useRef, useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import spriteSheet from '../assets/sheet.png';
 import { FirebaseContext } from '../context/FirebaseContext';
+import { renderBackground } from '../common/Background';
+import { renderHomeScreen, renderMessageHomeScreen } from '../common/HomeScreen';
+import { renderButtons, renderMessageGamerOver } from '../common/GameOver';
+import { renderFloor } from '../common/Floor';
 
 const Game = () => {
   const { score, setScore } = useContext(FirebaseContext);
@@ -8,21 +13,15 @@ const Game = () => {
   const [canvasSize, setCanvasSize] = useState({ width: 431, height: 600 });
   const sprites = new Image();
   sprites.src = spriteSheet;
-
-  const collision = (flappybird, floor) => {
-    const flappybirdY = flappybird.y + flappybird.height;
-    const floorY = floor.y;
-    return flappybirdY >= floorY;
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     const updateCanvasSize = () => {
       const width = window.innerWidth < 431 ? window.innerWidth : 431;
-      setCanvasSize({ width, height: 600 }); // Define a altura do canvas aqui
+      setCanvasSize({ width, height: 600 });
     };
 
-    updateCanvasSize(); // Define o tamanho inicial do canvas
-
+    updateCanvasSize();
     window.addEventListener('resize', updateCanvasSize);
 
     return () => {
@@ -32,11 +31,17 @@ const Game = () => {
 
   useEffect(() => {
     let frames = 0;
-    let scorePassedPipes = 0; // Nova variável para contar os canos passados
+    let scorePassedPipes = 0;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     canvas.width = canvasSize.width;
     canvas.height = canvasSize.height;
+
+    const collision = (flappybird, floor) => {
+      const flappybirdY = flappybird.y + flappybird.height;
+      const floorY = floor.y;
+      return flappybirdY >= floorY;
+    };
 
     const newFlappyBird = () => {
       const wings = [
@@ -50,8 +55,8 @@ const Game = () => {
         spriteY: wings[0].spriteY,
         width: 34,
         height: 24,
-        x: 50,
-        y: 150,
+        x: (canvas.width - 34) / 2,
+        y: 250,
         gravity: 0.25,
         speed: 0,
         jump: 4.6,
@@ -88,7 +93,7 @@ const Game = () => {
         },
         update() {
           if (collision(this, globais.floor)) {
-            changeScreen(screens.start);
+            changeScreen(screens.gameOver);
             return;
           }
           this.speed += this.gravity;
@@ -101,115 +106,6 @@ const Game = () => {
           }
         },
       };
-    };
-
-    const floor = {
-      spriteX: 276,
-      spriteY: 0,
-      width: 224,
-      height: 112,
-      x: 0,
-      y: canvas.height - 112,
-      speed: 2,
-      draw() {
-        const repeatTimes = Math.ceil(canvas.width / this.width) + 1;
-        for (let i = 0; i < repeatTimes; i++) {
-          ctx.drawImage(
-            sprites,
-            this.spriteX,
-            this.spriteY,
-            this.width,
-            this.height,
-            this.x + i * this.width,
-            this.y,
-            this.width,
-            this.height
-          );
-        }
-      },
-      update() {
-        this.x -= this.speed;
-        if (this.x <= -this.width) {
-          this.x = 0;
-        }
-      },
-    };
-
-    const background = {
-      spriteX: 0,
-      spriteY: 24,
-      width: 276,
-      height: 204,
-      x: 0,
-      y: canvas.height - 112 - 204,
-      draw() {
-        ctx.drawImage(
-          sprites,
-          this.spriteX,
-          this.spriteY,
-          this.width,
-          this.height,
-          this.x,
-          this.y,
-          this.width,
-          this.height
-        );
-        ctx.drawImage(
-          sprites,
-          this.spriteX,
-          this.spriteY,
-          this.width,
-          this.height,
-          this.x + this.width,
-          this.y,
-          this.width,
-          this.height
-        );
-      },
-    };
-
-    const homeScreen = {
-      spriteX: 0,
-      spriteY: 228,
-      width: 117,
-      height: 120,
-      x: (canvas.width - 117) / 2,
-      y: (canvas.height - 120) / 2,
-      draw() {
-        ctx.drawImage(
-          sprites,
-          this.spriteX,
-          this.spriteY,
-          this.width,
-          this.height,
-          this.x,
-          this.y,
-          this.width,
-          this.height
-        );
-      },
-    };
-
-    const messageHomeScreen = {
-      spriteX: 118,
-      spriteY: 310,
-      width: 174,
-      height: 44,
-      x: (canvas.width - 174) / 2,
-      y: ((canvas.height - homeScreen.y) - 44) / 2,
-      draw() {
-        ctx.drawImage(
-          sprites,
-          this.spriteX,
-          this.spriteY,
-          this.width,
-          this.height,
-          this.x,
-          this.y,
-          this.width,
-          this.height
-        );
-      },
     };
 
     const createPipes = () => {
@@ -232,8 +128,7 @@ const Game = () => {
             const spacingPipes = 120;
             const pipeSkyX = pair.x;
             const pipeSkyY = yRandom;
-    
-            // Desenha o cano do céu
+
             ctx.drawImage(
               sprites,
               this.sky.spriteX,
@@ -245,8 +140,7 @@ const Game = () => {
               this.width,
               this.height
             );
-    
-            // Desenha o cano do chão
+
             const pipeFloorX = pair.x;
             const pipeFloorY = this.height + spacingPipes + yRandom;
             ctx.drawImage(
@@ -260,7 +154,7 @@ const Game = () => {
               this.width,
               this.height
             );
-    
+
             pair.pipeSky = {
               x: pipeSkyX,
               y: pipeSkyY
@@ -271,25 +165,24 @@ const Game = () => {
             };
           });
         },
-    
+
         hasCollision(pair) {
           const flappyBird = globais.flappybird;
           const flappyBirdX = flappyBird.x;
           const flappyBirdY = flappyBird.y;
           const flappyBirdWidth = flappyBird.width;
           const flappyBirdHeight = flappyBird.height;
-    
-          // Verifica se o Flappy Bird está dentro da largura e altura do cano
+
           if (flappyBirdX + flappyBirdWidth > pair.x &&
-              flappyBirdX < pair.x + this.width &&
-              (flappyBirdY < pair.pipeSky.y + this.height ||
-               flappyBirdY + flappyBirdHeight > pair.pipeFloor.y)) {
+            flappyBirdX < pair.x + this.width &&
+            (flappyBirdY < pair.pipeSky.y + this.height ||
+              flappyBirdY + flappyBirdHeight > pair.pipeFloor.y)) {
             return true;
           }
-    
+
           return false;
         },
-    
+
         update() {
           const passed100Frames = frames % 100 === 0;
           if (passed100Frames) {
@@ -300,71 +193,68 @@ const Game = () => {
           }
           this.pairs.forEach((pair, index) => {
             pair.x -= 2;
-    
+
             if (this.hasCollision(pair)) {
               console.log("Você Perdeu");
-              changeScreen(screens.start);  // Encerra o jogo e volta para a tela inicial
+              changeScreen(screens.gameOver);
             }
-    
-            // Verifica se o Flappy Bird passou o cano e incrementa o placar
+
             if (pair.x + this.width < globais.flappybird.x && !pair.passed) {
               scorePassedPipes += 1;
-              setScore(scorePassedPipes); // Atualiza a pontuação no Firebase
-              pair.passed = true; // Marca o cano como passado
+              pair.passed = true;
             }
-    
+
             if (pair.x + this.width <= 0) {
               this.pairs.splice(index, 1);
             }
           });
         },
       };
-    
+
       return pipes;
     };
 
-    const globais = {};
-
-    const changeScreen = (newScreen) => {
-      screenActive = newScreen;
-
-      if (screenActive.initialize) {
-        screenActive.initialize();
-      }
-    };
-
     const createScore = () => {
-      const score = {
-        scores: 0,
+      const scoreObj = {
+        scores: score,
         draw() {
           ctx.font = '35px "Press Start 2P"';
+          ctx.strokeStyle = "black";
+          ctx.lineWidth = 8;
+          ctx.strokeText(`${this.scores}`, canvas.width / 2, 40);
           ctx.fillStyle = "white";
-          ctx.textAlign = "right";
-          ctx.fillText(`${this.scores}`, canvas.width - 35, 40);
+          ctx.textAlign = "center";
+          ctx.fillText(`${this.scores}`, canvas.width / 2, 40);
         },
         update() {
           this.scores = scorePassedPipes;
+          setScore(scorePassedPipes);
         }
       };
-      return score;
+      return scoreObj;
     };
+
+    const globais = {};
+    let screenActive = {};
 
     const screens = {
       start: {
         initialize() {
+          globais.background = renderBackground(canvas, ctx, sprites);
           globais.flappybird = newFlappyBird();
-          globais.floor = floor;
-          globais.background = background;
+          globais.floor = renderFloor(canvas, ctx, sprites);
           globais.pipes = createPipes();
-          globais.score = createScore(); // Inicializa o score
-          scorePassedPipes = 0; // Reseta o número de canos passados
+          globais.homeScreen = renderHomeScreen(canvas, ctx, sprites);
+          globais.messageHomeScreen = renderMessageHomeScreen(canvas, ctx, sprites, globais.homeScreen);
+          globais.score = createScore();
+          scorePassedPipes = 0;
         },
         draw() {
           globais.background.draw();
-          globais.floor.draw();
           globais.flappybird.draw();
-          homeScreen.draw();
-          messageHomeScreen.draw();
+          globais.floor.draw();
+          globais.homeScreen.draw();
+          globais.messageHomeScreen.draw();
         },
         click() {
           changeScreen(screens.game);
@@ -375,32 +265,93 @@ const Game = () => {
       },
       game: {
         initialize() {
-          globais.score = createScore(); // Inicializa o score
+          globais.background = renderBackground(canvas, ctx, sprites);
+          globais.floor = renderFloor(canvas, ctx, sprites);
+          globais.pipes = createPipes();
+          globais.flappybird = newFlappyBird();
+          globais.score = createScore();
         },
         draw() {
           globais.background.draw();
           globais.pipes.draw();
           globais.floor.draw();
           globais.flappybird.draw();
-          globais.score.draw(); // Desenha o score
+          globais.score.draw();
         },
         click() {
           globais.flappybird.jumper();
         },
         update() {
-          globais.floor.update();
           globais.pipes.update();
+          globais.floor.update();
           globais.flappybird.update();
-          globais.score.update(); // Atualiza o score
+          globais.score.update();
+        },
+      },
+      gameOver: {
+        initialize() {
+          globais.flappybird = newFlappyBird();
+          globais.background = renderBackground(canvas, ctx, sprites);
+          globais.floor = renderFloor(canvas, ctx, sprites);
+          globais.messageGamerOver = renderMessageGamerOver(canvas, ctx, sprites);
+          globais.renderButton = renderButtons(canvas, ctx, sprites);
+        },
+        draw() {
+          globais.background.draw();
+          globais.floor.draw();
+          globais.messageGamerOver.draw();
+          globais.renderButton.buttonRestart.draw();
+          globais.renderButton.buttonSaveScore.draw();
+          globais.renderButton.buttonToShare.draw();
+        },
+        update() {
+          // Atualiza apenas o que for necessário
+        },
+        click(event) {
+          const x = event.clientX - canvas.getBoundingClientRect().left;
+          const y = event.clientY - canvas.getBoundingClientRect().top;
+
+          if (globais.renderButton.buttonRestart.isClicked(x, y)) {
+            changeScreen(screens.start);
+          } else if (globais.renderButton.buttonSaveScore.isClicked(x, y)) {
+            saveScore();
+          } else if (globais.renderButton.buttonToShare.isClicked(x, y)) {
+            shareScore();
+          }
         },
       },
     };
 
-    let screenActive = screens.start;
+    const saveScore = () => {
+      // Salvar pontuação no Firebase ou localmente
+      console.log('Pontuação salva:', scorePassedPipes);
+
+      // Redirecionar para a página de high scores
+      navigate(`/highscores?score=${encodeURIComponent(scorePassedPipes)}`);
+    };
+
+    const shareScore = () => {
+      // Função para compartilhar a pontuação
+      if (navigator.share) {
+        navigator.share({
+          title: 'Minha Pontuação no Flappy Bird',
+          text: `Minha pontuação é ${scorePassedPipes}!`,
+        }).catch(console.error);
+      } else {
+        // Caso o compartilhamento não seja suportado
+        alert(`Minha pontuação é ${scorePassedPipes}!`);
+      }
+    };
+
+    const changeScreen = (screen) => {
+      screenActive = screen;
+      if (screenActive.initialize) {
+        screenActive.initialize();
+      }
+    };
 
     const loop = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       screenActive.draw();
       if (screenActive.update) {
         screenActive.update();
@@ -409,23 +360,17 @@ const Game = () => {
       requestAnimationFrame(loop);
     };
 
-    const handleClick = () => {
-      if (screenActive.click) {
-        screenActive.click();
-      }
-    };
-
-    canvas.addEventListener('click', handleClick);
-
     sprites.onload = () => {
       changeScreen(screens.start);
       loop();
     };
 
-    return () => {
-      canvas.removeEventListener('click', handleClick);
-    };
-  }, [canvasSize, setScore]); // Adicione 'canvasSize' e 'setScore' como dependências
+    canvas.addEventListener('click', (event) => {
+      if (screenActive.click) {
+        screenActive.click(event);
+      }
+    });
+  }, [canvasSize]);
 
   return (
     <div className="w-full h-full flex items-center justify-center">
