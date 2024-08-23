@@ -7,36 +7,45 @@ import { createMedal, renderButtons, renderMessageGamerOver, renderScoreboard, c
 import { renderFloor } from '../common/Floor';
 import { GameContext } from '../context/GameContext';
 import { useTranslation } from 'react-i18next';
+// áudios 
+import SomColison from '../sounds/soco.mp3';
+import SoundPont from '../sounds/sfx_point.mp3';
+import SoundWings from '../sounds/sfx_wing.mp3';
+import SoubndSwooshing from '../sounds/sfx_swooshing.mp3';
+import SoundBackground from '../sounds/Sound_Background.mp3';
 
 const Game = () => {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 431, height: 600 });
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const sprites = new Image();
   sprites.src = spriteSheet;
   const navigate = useNavigate();
+  const soundColision = new Audio(SomColison);
+  const soundPont = new Audio(SoundPont);
+  const soundWings = new Audio(SoundWings);
+  const soubndSwooshing = new Audio(SoubndSwooshing);
+  const soundBackground = useRef(new Audio(SoundBackground));
+
+  // Configure o volume e o loop da música de fundo apenas uma vez
+  useEffect(() => {
+    const audio = soundBackground.current;
+    audio.volume = 0.3;
+    audio.loop = true;
+    audio.play();
+    return () => {
+      audio.pause(); // Pausa a música de fundo quando o componente é desmontado
+    };
+  }, []);
 
   const { setScore } = useContext(GameContext);
+
   // Objeto global para armazenar a pontuação
   const globalScores = {
     highScore: 0,
     currentScore: 0
   };
   var scorePassedPipes = 0; // Inicialização da pontuação
-
-  useEffect(() => {
-    const updateCanvasSize = () => {
-      const width = window.innerWidth < 431 ? window.innerWidth : 431;
-      setCanvasSize({ width, height: 600 });
-    };
-
-    updateCanvasSize();
-    window.addEventListener('resize', updateCanvasSize);
-
-    return () => {
-      window.removeEventListener('resize', updateCanvasSize);
-    };
-  }, []);
 
   useEffect(() => {
     let frames = 0;
@@ -48,7 +57,9 @@ const Game = () => {
     const collision = (flappybird, floor) => {
       const flappybirdY = flappybird.y + flappybird.height;
       const floorY = floor.y;
-      return flappybirdY >= floorY;
+      const hasCollided = flappybirdY >= floorY;
+      hasCollided && soundColision.play(); 
+      return hasCollided;
     };
 
     const newFlappyBird = () => {
@@ -97,6 +108,8 @@ const Game = () => {
           ctx.restore();
         },
         jumper() {
+          soundWings.volume = 0.6
+          soundWings.play();
           this.speed = -this.jump;
         },
         update() {
@@ -181,17 +194,24 @@ const Game = () => {
           const flappyBirdY = flappyBird.y;
           const flappyBirdWidth = flappyBird.width;
           const flappyBirdHeight = flappyBird.height;
-
-          if (flappyBirdX + flappyBirdWidth > pair.x &&
+        
+          // Verifica se a colisão já foi detectada
+          if (this.collisionDetected) return true;
+        
+          if (
+            flappyBirdX + flappyBirdWidth > pair.x &&
             flappyBirdX < pair.x + this.width &&
             (flappyBirdY < pair.pipeSky.y + this.height ||
-              flappyBirdY + flappyBirdHeight > pair.pipeFloor.y)) {
+              flappyBirdY + flappyBirdHeight > pair.pipeFloor.y)
+          ) {
+            this.collisionDetected = true; // Marca a colisão como detectada
+            soundColision.play(); // Reproduz o som de colisão
             return true;
           }
-
+        
           return false;
         },
-
+        
         update() {
           const passed100Frames = frames % 100 === 0;
           if (passed100Frames) {
@@ -209,6 +229,7 @@ const Game = () => {
             }
 
             if (pair.x + this.width < globais.flappybird.x && !pair.passed) {
+              soundPont.play();
               scorePassedPipes += 1;
               pair.passed = true;
             }
@@ -230,10 +251,9 @@ const Game = () => {
           ctx.font = '35px "Press Start 2P"';
           ctx.strokeStyle = "black";
           ctx.lineWidth = 8;
-          ctx.strokeText(`${this.scores}`, canvas.width / 2, 40);
+          ctx.strokeText(`${this.scores}`, canvas.width / 2 - 6, 40);
           ctx.fillStyle = "white";
-          ctx.textAlign = "center";
-          ctx.fillText(`${this.scores}`, canvas.width / 2, 40);
+          ctx.fillText(`${this.scores}`, canvas.width / 2 - 6, 40);
         },
         update() {
           this.scores = scorePassedPipes;
@@ -254,6 +274,8 @@ const Game = () => {
           globais.pipes = createPipes();
           globais.homeScreen = renderHomeScreen(canvas, ctx, sprites);
           globais.messageHomeScreen = renderMessageHomeScreen(canvas, ctx, sprites, globais.homeScreen);
+          globais.score = createScore();
+          scorePassedPipes = 0;
         },
         draw() {
           globais.background.draw();
@@ -263,6 +285,7 @@ const Game = () => {
           globais.messageHomeScreen.draw();
         },
         click() {
+          soubndSwooshing.play();
           changeScreen(screens.game);
         },
         update() {
@@ -382,6 +405,10 @@ const Game = () => {
         screenActive.click(event);
       }
     });
+
+    return () => {
+      soundBackground.current.pause(); // Pausa a música de fundo quando o componente é desmontado
+    };
   }, [canvasSize, setScore]);
 
   return (
