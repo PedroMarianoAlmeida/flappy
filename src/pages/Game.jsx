@@ -1,17 +1,28 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import spriteSheet from '../assets/sheet.png';
 import { renderBackground } from '../common/Background';
 import { renderHomeScreen, renderMessageHomeScreen } from '../common/HomeScreen';
 import { createMedal, renderButtons, renderMessageGamerOver, renderScoreboard, currentScore } from '../common/GameOver';
 import { renderFloor } from '../common/Floor';
+import { GameContext } from '../context/GameContext';
+import { useTranslation } from 'react-i18next';
 
 const Game = () => {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 431, height: 600 });
+  const { t } = useTranslation()
   const sprites = new Image();
   sprites.src = spriteSheet;
   const navigate = useNavigate();
+
+  const { setScore } = useContext(GameContext);
+  // Objeto global para armazenar a pontuação
+  const globalScores = {
+    highScore: 0,
+    currentScore: 0
+  };
+  var scorePassedPipes = 0; // Inicialização da pontuação
 
   useEffect(() => {
     const updateCanvasSize = () => {
@@ -29,7 +40,6 @@ const Game = () => {
 
   useEffect(() => {
     let frames = 0;
-    let scorePassedPipes = 0;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     canvas.width = canvasSize.width;
@@ -91,6 +101,7 @@ const Game = () => {
         },
         update() {
           if (collision(this, globais.floor)) {
+            setScore(scorePassedPipes); // Envia a pontuação para o contexto
             changeScreen(screens.gameOver);
             return;
           }
@@ -193,7 +204,7 @@ const Game = () => {
             pair.x -= 2;
 
             if (this.hasCollision(pair)) {
-              console.log("Você Perdeu");
+              setScore(scorePassedPipes); // Envia a pontuação para o contexto
               changeScreen(screens.gameOver);
             }
 
@@ -206,8 +217,6 @@ const Game = () => {
               this.pairs.splice(index, 1);
             }
           });
-
-          console.log('Pontuação atualizada:', scorePassedPipes); // Adicionado para depuração
         },
       };
 
@@ -245,8 +254,6 @@ const Game = () => {
           globais.pipes = createPipes();
           globais.homeScreen = renderHomeScreen(canvas, ctx, sprites);
           globais.messageHomeScreen = renderMessageHomeScreen(canvas, ctx, sprites, globais.homeScreen);
-          globais.score = createScore();
-          scorePassedPipes = 0;
         },
         draw() {
           globais.background.draw();
@@ -293,10 +300,14 @@ const Game = () => {
           globais.background = renderBackground(canvas, ctx, sprites);
           globais.floor = renderFloor(canvas, ctx, sprites);
           globais.messageGamerOver = renderMessageGamerOver(canvas, ctx, sprites);
-          globais.renderButton = renderButtons(canvas, ctx, sprites);
+          globais.renderButton = renderButtons(canvas, ctx, sprites, t);
           globais.scoreboard = renderScoreboard(canvas, ctx, sprites);
-          globais.medal = createMedal(canvas, scorePassedPipes, ctx, sprites); // Adiciona a medalha
-          globais.scoreGameOver = currentScore(canvas, ctx, scorePassedPipes);
+          globais.medal = createMedal(canvas, scorePassedPipes, ctx, sprites, t);
+          globais.scoreGameOver = currentScore(canvas, ctx, scorePassedPipes, t);
+          // Atualiza o high score global se a pontuação atual for maior
+          if (scorePassedPipes > globalScores.highScore) {
+            globalScores.highScore = scorePassedPipes;
+          }
         },
         draw() {
           globais.background.draw();
@@ -306,8 +317,8 @@ const Game = () => {
           globais.renderButton.buttonSaveScore.draw();
           globais.renderButton.buttonToShare.draw();
           globais.scoreboard.draw();
-          globais.medal.draw(); // Desenha a medalha
-          globais.scoreGameOver.draw(); // Desenha a pontuação
+          globais.medal.draw();
+          globais.scoreGameOver.draw();
         },
         update() {
           // Atualiza apenas o que for necessário
@@ -328,7 +339,9 @@ const Game = () => {
     };
 
     const saveScore = () => {
-      navigate(`/highscores?score=${scorePassedPipes}`);
+      navigate('/highscores', {
+        state: { score: scorePassedPipes }
+      });
     };
 
     const shareScore = () => {
@@ -369,7 +382,7 @@ const Game = () => {
         screenActive.click(event);
       }
     });
-  }, [canvasSize]);
+  }, [canvasSize, setScore]);
 
   return (
     <div className="w-full h-full flex items-center justify-center">

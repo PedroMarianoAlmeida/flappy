@@ -13,16 +13,20 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-// Images
+import { useTranslation } from 'react-i18next';
 import Logo from '../assets/flappy-bird.svg';
 import { Link } from 'react-router-dom';
+import { GameContext } from '../context/GameContext';
 
 const drawerWidth = 240;
-const navItems = ['Game', 'Highscores'];
 
+const navItems = ['Game', 'Highscores'];
 function Navbar(props) {
+
+    const { t } = useTranslation();
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const { setScore } = React.useContext(GameContext);
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
     };
@@ -36,10 +40,12 @@ function Navbar(props) {
                 className='flex items-center justify-center '
                 variant="h6"
                 sx={{ my: 2 }}>
-                <Link href="/"><img
-                    className='w-36'
-                    src={Logo}
-                    alt="" /></Link>
+                <Link
+                    onClick={() => setScore(0)}
+                    href="/"><img
+                        className='w-36'
+                        src={Logo}
+                        alt="" /></Link>
             </Typography>
             <Divider
                 className='bg-slate-600'
@@ -48,7 +54,7 @@ function Navbar(props) {
                 {navItems.map((item) => (
                     <ListItem key={item} disablePadding>
                         <ListItemButton sx={{ textAlign: 'center', fontFamily: "Press Start 2P", color: "#fff" }}>
-                            <Link to={`/${item}`} className='w-full h-full '><ListItemText primary={item} /></Link>
+                            <Link onClick={() => setScore(0)} to={`/${item}`} className='w-full h-full '><ListItemText primary={t(item)} /></Link>
                         </ListItemButton>
                     </ListItem>
                 ))}
@@ -77,7 +83,10 @@ function Navbar(props) {
                         component="div"
                         sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
                     >
-                        <Link to="/">
+                        <Link to="/"
+                            onClick={() => setScore(0)}
+                        >
+
                             <img
                                 src={Logo}
                                 alt="Logo"
@@ -87,12 +96,13 @@ function Navbar(props) {
                     </Typography>
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                         {navItems.map((item) => (
-                            <Link 
-                                to={`/${item}`} 
-                                key={item} 
+                            <Link
+                                onClick={() => setScore(0)}
+                                to={`/${item}`}
+                                key={item}
                                 className='p-2 text-white hover:text-blue-400 hover:underline transition duration-300'
                             >
-                                {item}
+                                {t(item)}
                             </Link>
                         ))}
                     </Box>

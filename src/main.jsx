@@ -6,7 +6,7 @@ import './App.css'
 import { BrowserRouter } from 'react-router-dom'
 import { FirebaseProvider } from './context/FirebaseContext.jsx'
 import { GameProvider } from './context/GameContext.jsx'
-
+import "./i18n"
 createRoot(document.getElementById('root')).render(
 
   <StrictMode>

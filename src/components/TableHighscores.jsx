@@ -1,4 +1,4 @@
-// components/TableHighscores.js
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,9 +8,12 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useContext, useEffect, useState } from 'react';
 import { FirebaseContext } from '../context/FirebaseContext';
+import { useTranslation } from 'react-i18next';
+
 export default function TableHighscores() {
     const { fetchData, data } = useContext(FirebaseContext);
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslation()
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -38,20 +41,20 @@ export default function TableHighscores() {
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ color: "#fff", fontSize: 18, fontWeight: "bold" }} align="center">
-                            Position
+                            {t("Position")}
                         </TableCell>
                         <TableCell sx={{ color: "#fff", fontSize: 18, fontWeight: "bold" }} align="center">
-                            Name
+                            {t("Name")}
                         </TableCell>
                         <TableCell sx={{ color: "#fff", fontSize: 18, fontWeight: "bold" }} align="center">
-                            Score
+                            {t("Score")}
                         </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {data.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={3} align="center">No data available</TableCell>
+                            <TableCell colSpan={3} align="center">{t("No data available")}</TableCell>
                         </TableRow>
                     ) : (
                         data.map((user, index) => (

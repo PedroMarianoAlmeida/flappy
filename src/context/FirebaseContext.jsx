@@ -16,7 +16,6 @@ const FirebaseProvider = ({ children }) => {
             const snapshot = await getDocs(q);
             const fetchedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setData(fetchedData);
-            console.log(fetchedData); // Log para verificar os dados
         } catch (error) {
             console.error("Erro ao buscar dados:", error);
         }
@@ -24,11 +23,9 @@ const FirebaseProvider = ({ children }) => {
 
     const saveScore = useCallback(async (newScore) => {
         try {
-            // Substitua 'scores' pelo nome da sua coleção no Firestore
             const colRef = collection(db, 'Data');
             await addDoc(colRef, newScore);
             console.log("Pontuação salva com sucesso!");
-            // Opcional: atualizar a lista de dados após salvar uma nova pontuação
             fetchData('scores');
         } catch (error) {
             console.error("Erro ao salvar a pontuação:", error);

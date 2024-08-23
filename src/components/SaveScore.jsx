@@ -1,36 +1,26 @@
 import { Button } from '@mui/material';
 import { useContext, useState } from 'react';
-import { FirebaseContext } from '../context/FirebaseContext'; // Ajuste o caminho conforme necessário
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { FirebaseContext } from '../context/FirebaseContext'; 
+import { GameContext } from '../context/GameContext';
+import { useTranslation } from 'react-i18next';
 
 const SaveScore = ({ score }) => {
-    const { saveScore } = useContext(FirebaseContext); // Acesso à função saveScore
+    const { saveScore } = useContext(FirebaseContext); 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // Hook para navegação
-
+    const { setScore } = useContext(GameContext);
+    const { t } = useTranslation();
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!name || !email) {
-            setError('Please fill out all fields.');
-            return;
-        }
-        try {
             await saveScore({ score, name, email });
-            alert('Score saved successfully!');
-            navigate(`/highscores?score=${score}`); // Redireciona para a página de highscores com a pontuação
-        } catch (err) {
-            setError('Failed to save score.');
-            console.error(err);
-        }
-    };
-
+            setScore(0)
+    }
     return (
         <div className='h-full flex items-center text-white flex-col px-4'>
             <div>
                 <h1 className='text-3xl md:text-4xl flex flex-col text-center'>
-                    You scored:
+                    {t("You scored")}:
                     <span className='font-bold text-6xl md:text-8xl'>{score}</span>
                 </h1>
             </div>
@@ -50,7 +40,7 @@ const SaveScore = ({ score }) => {
                         htmlFor="name"
                         className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                     >
-                        Enter your name
+                        {t("Enter your name")}
                     </label>
                 </div>
 
@@ -69,11 +59,11 @@ const SaveScore = ({ score }) => {
                         htmlFor="email"
                         className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                     >
-                        Enter your email
+                        {t("Enter your email")}
                     </label>
                 </div>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
-                <Button type='submit' variant="contained">Submit</Button>
+                <Button type='submit' variant="contained">{t("Submit")}</Button>
             </form>
         </div>
     );

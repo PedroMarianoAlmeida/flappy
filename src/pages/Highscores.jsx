@@ -1,38 +1,32 @@
-import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { GameContext } from "../context/GameContext";
 import TableHighscores from "../components/TableHighscores";
 import SaveScore from "../components/SaveScore";
+import { useTranslation } from 'react-i18next';
 
 const Highscores = () => {
-    const [saveScore, setSaveScore] = useState(false);
-    const [score, setScore] = useState(null);
-    const location = useLocation();
-
+    const [scoreReal, setScoreReal] = useState(null);
+    const { score } = useContext(GameContext);
+    const { t } = useTranslation()
     useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-        const scoreParam = queryParams.get('score');
-
-        if (scoreParam) {
-            setScore(Number(scoreParam));
-            setSaveScore(true);
+        if (score !== undefined) {
+            setScoreReal(score);
         }
-    }, [location.search]);
+    }, [score]);
 
-    if (saveScore) {
-        return (
-            <>
-                <SaveScore score={score} />
-            </>
-        );
-    } else {
-        return (
-            <div className="flex flex-col w-full items-center">
-                <h1 className="text-white text-3xl font-bold m-4">Rank</h1>
-                <p className="text-white text-2xl m-0">Top 20 best scores</p>
-                <TableHighscores />
-            </div>
-        );
-    }
+    return (
+        <div className="flex flex-col w-full items-center">
+            {scoreReal !== 0 ? (
+                <SaveScore score={scoreReal} />
+            ) : (
+                <>
+                    <h1 className="text-white text-3xl font-bold m-4">{t("Rank")}</h1>
+                    <p className="text-white text-2xl m-0">{t("Top 20 best scores")}</p>
+                    <TableHighscores />
+                </>
+            )}
+        </div>
+    );
 };
 
 export default Highscores;

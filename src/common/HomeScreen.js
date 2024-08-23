@@ -23,7 +23,6 @@ export const renderHomeScreen = (canvas, ctx, sprites) => {
   
     return homeScreen;
 }
-
 export const renderMessageHomeScreen = (canvas, ctx, sprites, homeScreen) => {
     const messageHomeScreen = {
         spriteX: 118,

@@ -1,3 +1,5 @@
+const languageBrowser = (navigator.language || navigator.userLanguage).toLowerCase();
+
 export const renderMessageGamerOver = (canvas, ctx, sprites) => {
     const messageGamerOver = {
         spriteX: 118,
@@ -60,7 +62,7 @@ export const renderButtons = (canvas, ctx) => {
             ctx.font = '6px "Press Start 2P"';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('Play again', this.x + this.width / 2, this.y + this.height / 2);
+            ctx.fillText( languageBrowser === "pt-br" ? "Jogar Novamente": 'Play again', this.x + this.width / 2, this.y + this.height / 2);
         },
         isClicked(x, y) {
             return x >= this.x && x <= this.x + this.width &&
@@ -94,7 +96,7 @@ export const renderButtons = (canvas, ctx) => {
             ctx.font = '6px "Press Start 2P"';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('Save Score', this.x + this.width / 2, this.y + this.height / 2);
+            ctx.fillText(languageBrowser === "pt-br" ? "Salvar Pontução": 'Save Score', this.x + this.width / 2, this.y + this.height / 2);
         },
         isClicked(x, y) {
             return x >= this.x && x <= this.x + this.width &&
@@ -128,7 +130,7 @@ export const renderButtons = (canvas, ctx) => {
             ctx.font = '6px "Press Start 2P"';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('To share', this.x + this.width / 2, this.y + this.height / 2);
+            ctx.fillText(languageBrowser === "pt-br" ? "Compartilhar": 'To share', this.x + this.width / 2, this.y + this.height / 2);
         },
         isClicked(x, y) {
             return x >= this.x && x <= this.x + this.width &&
@@ -144,7 +146,7 @@ export const renderButtons = (canvas, ctx) => {
 
         if (buttonRestart.isClicked(x, y)) {
             console.log('Botão "Play again" clicado!');
-            // Adicione aqui a lógica para o botão "Play again"
+            
         } else if (buttonSaveScore.isClicked(x, y)) {
             console.log('Botão "Save Score" clicado!');
             // Adicione aqui a lógica para o botão "Save Score"
@@ -217,7 +219,6 @@ export const renderMedal = (canvas, ctx, sprites) => {
         }
     };
     return medal;
-
 }
 
 export const createMedal = (canvas, scorePassedPipes, ctx, sprites) => {
@@ -230,7 +231,7 @@ export const createMedal = (canvas, scorePassedPipes, ctx, sprites) => {
       ],
       width: 44,
       height: 44,
-      // Ajuste os valores para posicionar a medalha na tela
+     
       x: canvas.width * 0.75 - 195, // 75% da largura do canvas menos metade da largura da medalha
       y: canvas.height * 0.5 - 57, // 50% da altura do canvas menos metade da altura da medalha
       draw() {
@@ -252,29 +253,27 @@ export const createMedal = (canvas, scorePassedPipes, ctx, sprites) => {
     return medal;
   };
 
-
-
   export const currentScore = (canvas, ctx, score) => {
     const scoreGameOver = {
             spriteX: 118,
             spriteY: 272,
             width: 188,
             height: 38,
-            x: (canvas.width - 188) / 2, // Centraliza a imagem do placar
-            y: canvas.height / 4, // Coloca a imagem do placar no topo
+            x: (canvas.width - 188) / 2,
+            y: canvas.height / 4, 
             draw() {
-              // Configura o estilo do texto
-              ctx.font = 'bold 15px "Press Start 2P"'; // Fonte e tamanho do texto
-              ctx.textAlign = 'center'; // Alinha o texto no centro
-              ctx.textBaseline = 'middle'; // Alinha o texto verticalmente no meio
               
-              // Primeiro desenha o contorno do texto
+              ctx.font = 'bold 15px "Press Start 2P"'; 
+              ctx.textAlign = 'center'; 
+              ctx.textBaseline = 'middle'; 
+              
+              
               ctx.strokeStyle = "black";
               ctx.lineWidth = 5;
               ctx.strokeText(score, 290, 243);
               
-              // Depois desenha o texto preenchido
-              ctx.fillStyle = '#FFFFFF'; // Cor do texto (branco)
+              
+              ctx.fillStyle = '#FFFFFF'; 
               ctx.fillText(score, 290, 243);
             }
           };
