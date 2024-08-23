@@ -96,7 +96,7 @@ export const renderButtons = (canvas, ctx) => {
             ctx.font = fontSizeButton;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(languageBrowser === "pt-br" ? "Salvar Pontução": 'Save Score', this.x + this.width / 2, this.y + this.height / 2);
+            ctx.fillText(languageBrowser === "pt-br" ? "Salvar Pontuação": 'Save Score', this.x + this.width / 2, this.y + this.height / 2);
         },
         isClicked(x, y) {
             return x >= this.x && x <= this.x + this.width &&
