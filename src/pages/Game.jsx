@@ -7,7 +7,7 @@ import { createMedal, renderButtons, renderMessageGamerOver, renderScoreboard, c
 import { renderFloor } from '../common/Floor';
 import { GameContext } from '../context/GameContext';
 import { useTranslation } from 'react-i18next';
-// áudios 
+// áudios
 import SomColison from '../sounds/soco.mp3';
 import SoundPont from '../sounds/sfx_point.mp3';
 import SoundWings from '../sounds/sfx_wing.mp3';
@@ -45,7 +45,8 @@ const Game = () => {
     highScore: 0,
     currentScore: 0
   };
-  var scorePassedPipes = 0; // Inicialização da pontuação
+  let scorePassedPipes = 0; // Inicialização da pontuação
+  let gameOver = false; // Flag para verificar se o jogo acabou
 
   useEffect(() => {
     let frames = 0;
@@ -57,9 +58,7 @@ const Game = () => {
     const collision = (flappybird, floor) => {
       const flappybirdY = flappybird.y + flappybird.height;
       const floorY = floor.y;
-      const hasCollided = flappybirdY >= floorY;
-      hasCollided && soundColision.play(); 
-      return hasCollided;
+      return flappybirdY >= floorY;
     };
 
     const newFlappyBird = () => {
@@ -108,13 +107,16 @@ const Game = () => {
           ctx.restore();
         },
         jumper() {
-          soundWings.volume = 0.6
+          soundWings.volume = 0.6;
           soundWings.play();
           this.speed = -this.jump;
         },
         update() {
+          if (gameOver) return; // Não atualiza o flappybird se o jogo acabou
           if (collision(this, globais.floor)) {
+            soundColision.play(); // Toca o som de colisão
             setScore(scorePassedPipes); // Envia a pontuação para o contexto
+            gameOver = true; // Define a flag como verdadeira
             changeScreen(screens.gameOver);
             return;
           }
@@ -187,45 +189,42 @@ const Game = () => {
             };
           });
         },
-
         hasCollision(pair) {
           const flappyBird = globais.flappybird;
           const flappyBirdX = flappyBird.x;
           const flappyBirdY = flappyBird.y;
           const flappyBirdWidth = flappyBird.width;
           const flappyBirdHeight = flappyBird.height;
-        
-          // Verifica se a colisão já foi detectada
-          if (this.collisionDetected) return true;
-        
-          if (
+
+          return (
             flappyBirdX + flappyBirdWidth > pair.x &&
             flappyBirdX < pair.x + this.width &&
             (flappyBirdY < pair.pipeSky.y + this.height ||
               flappyBirdY + flappyBirdHeight > pair.pipeFloor.y)
-          ) {
-            this.collisionDetected = true; // Marca a colisão como detectada
-            soundColision.play(); // Reproduz o som de colisão
-            return true;
-          }
-        
-          return false;
+          );
         },
-        
         update() {
+          if (gameOver) return; // Não atualiza os canos se o jogo acabou
           const passed100Frames = frames % 100 === 0;
           if (passed100Frames) {
             this.pairs.push({
               x: canvas.width,
               y: -150 * (Math.random() * (Math.random() * 2) + 1),
+              passed: false,
+              collisionDetected: false,
             });
           }
           this.pairs.forEach((pair, index) => {
             pair.x -= 2;
 
             if (this.hasCollision(pair)) {
-              setScore(scorePassedPipes); // Envia a pontuação para o contexto
-              changeScreen(screens.gameOver);
+              if (!pair.collisionDetected) {
+                soundColision.play();
+                pair.collisionDetected = true;
+                setScore(scorePassedPipes);
+                gameOver = true; // Define a flag como verdadeira
+                changeScreen(screens.gameOver);
+              }
             }
 
             if (pair.x + this.width < globais.flappybird.x && !pair.passed) {
@@ -251,9 +250,10 @@ const Game = () => {
           ctx.font = '35px "Press Start 2P"';
           ctx.strokeStyle = "black";
           ctx.lineWidth = 8;
-          ctx.strokeText(`${this.scores}`, canvas.width / 2 - 6, 40);
+          ctx.textAlign = "center";
+          ctx.strokeText(`${this.scores}`, canvas.width / 2, (canvas.height - 470) /2);
           ctx.fillStyle = "white";
-          ctx.fillText(`${this.scores}`, canvas.width / 2 - 6, 40);
+          ctx.fillText(`${this.scores}`, canvas.width / 2, (canvas.height - 470) / 2);
         },
         update() {
           this.scores = scorePassedPipes;
@@ -276,6 +276,7 @@ const Game = () => {
           globais.messageHomeScreen = renderMessageHomeScreen(canvas, ctx, sprites, globais.homeScreen);
           globais.score = createScore();
           scorePassedPipes = 0;
+          gameOver = false; // Reseta o game over quando inicia um novo jogo
         },
         draw() {
           globais.background.draw();

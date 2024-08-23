@@ -26,7 +26,7 @@ export const renderMessageGamerOver = (canvas, ctx, sprites) => {
 };
 
 export const renderButtons = (canvas, ctx) => {
-    const buttonWidth = 100; // Largura do botão
+    const buttonWidth = 170; // Largura do botão
     const buttonHeight = 25; // Altura do botão
     const borderWidth1 = 4; // Largura da primeira borda
     const borderWidth2 = 2; // Largura da segunda borda
@@ -35,7 +35,7 @@ export const renderButtons = (canvas, ctx) => {
     const buttonPadding = 10; // Espaço entre os botões
     const scoreboardHeight = 116; // Altura do placar
     const spacingFromScoreboard = 20; // Espaço entre o placar e os botões
-
+    const fontSizeButton = '10px "Press Start 2P"';
     // Botão "Jogar Novamente"
     const buttonRestart = {
         x: (canvas.width - (buttonWidth * 2 + buttonPadding)) / 2, // Centraliza o botão à esquerda
@@ -59,7 +59,7 @@ export const renderButtons = (canvas, ctx) => {
 
             // Adiciona o texto
             ctx.fillStyle = 'white'; // Cor do texto
-            ctx.font = '6px "Press Start 2P"';
+            ctx.font = fontSizeButton;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText( languageBrowser === "pt-br" ? "Jogar Novamente": 'Play again', this.x + this.width / 2, this.y + this.height / 2);
@@ -93,7 +93,7 @@ export const renderButtons = (canvas, ctx) => {
 
             // Adiciona o texto
             ctx.fillStyle = 'white'; // Cor do texto
-            ctx.font = '6px "Press Start 2P"';
+            ctx.font = fontSizeButton;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(languageBrowser === "pt-br" ? "Salvar Pontução": 'Save Score', this.x + this.width / 2, this.y + this.height / 2);
@@ -127,7 +127,7 @@ export const renderButtons = (canvas, ctx) => {
 
             // Adiciona o texto
             ctx.fillStyle = 'white'; // Cor do texto
-            ctx.font = '6px "Press Start 2P"';
+            ctx.font = fontSizeButton;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(languageBrowser === "pt-br" ? "Compartilhar": 'To share', this.x + this.width / 2, this.y + this.height / 2);
