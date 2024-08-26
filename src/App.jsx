@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Highscores from './pages/Highscores'
 import PageBasic from './pages/PageBasic'
 import Game from './pages/Game'
+import NotFound from './pages/NotFound';
 function App() {
 
   const { t } = useTranslation();
@@ -14,6 +15,7 @@ function App() {
           <Route index element={<Game />} />
           <Route path='/game' element={<Game />} />
           <Route path='/highscores' element={<Highscores />} />
+          <Route path="*" element={<NotFound />} />
           </Route>
           </Routes>
     </>

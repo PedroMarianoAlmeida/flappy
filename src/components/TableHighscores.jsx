@@ -28,7 +28,7 @@ export default function TableHighscores() {
     }, [fetchData]);
 
     if (loading) {
-        return <div className='font-press-start mt-20 text-[#fff] w-full h-full flex items-center justify-center'>Loading...</div>;
+        return <div className='font-press-start mt-20 text-[#fff] w-full h-full flex items-center justify-center'>{t("Loading")}...</div>;
     }
 
     return (

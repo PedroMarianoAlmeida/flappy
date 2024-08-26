@@ -14,4 +14,8 @@ export default {
     "Position": "Posição",
     "Score": "Pontuação",
     "Back": "Voltar",
+    "Page Not Found": "Página Não Encontrada",
+    "Sorry, the page you are looking for does not exist.":"Desculpe, a página que você está procurando não existe.",
+    "Return to home page": "Voltar para página inicial",
+    "Loading":"Carregando"
   };

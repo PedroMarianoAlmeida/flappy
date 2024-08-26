@@ -7,13 +7,13 @@ const PageBasic = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
             <Navbar />
             <Box
-                className='bg-slate-800'
+                className='bg-slate-800 min-h-screen:'
                 component="main"
                 sx={{
                     flexGrow: 1, // Ocupa o restante do espaço
                     p: 2,
                     border: "none",
-                    marginTop: '64px', // Ajuste a altura conforme necessário para o Navbar
+                    marginTop: '0px', // Ajuste a altura conforme necessário para o Navbar
                 }}
             >
                 <Outlet />

@@ -413,7 +413,7 @@ const Game = () => {
   }, [canvasSize, setScore]);
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-auto h-screen flex items-center justify-center">
       <canvas ref={canvasRef} className="border-2 bg-[#70c5ce] "></canvas>
     </div>
   );
