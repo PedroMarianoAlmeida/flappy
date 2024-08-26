@@ -55,10 +55,10 @@ const Game = () => {
     const ctx = canvas.getContext('2d');
     canvas.width = canvasSize.width;
     canvas.height = canvasSize.height;
-
-    const fps = 100;
-    const frameDuration = 1000 / fps;
+    const targetFPS = 60;
+    const frameDuration = 1000 / targetFPS; // Duração de cada frame em milissegundos
     let lastFrameTime = 0;
+    let accumulatedTime = 0;
 
     const collision = (flappybird, floor) => {
       const flappybirdY = flappybird.y + flappybird.height;
@@ -395,24 +395,25 @@ const Game = () => {
     };
 
     const loop = (currentTime) => {
-      const deltaTime = (currentTime - lastFrameTime) / 1000; // Tempo em segundos
-      
-      // Atualize a lógica do jogo com base no deltaTime
-      if (deltaTime >= frameDuration / 1000) {
-        lastFrameTime = currentTime;
-        
+      const deltaTime = currentTime - lastFrameTime;
+      lastFrameTime = currentTime;
+    
+      accumulatedTime += deltaTime;
+    
+      while (accumulatedTime >= frameDuration) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         screenActive.draw();
         if (screenActive.update) {
-          screenActive.update(deltaTime);
+          screenActive.update(frameDuration / 1000); // Atualize com o deltaTime em segundos
         }
+        accumulatedTime -= frameDuration;
         frames += 1;
       }
     
-      // Solicite o próximo frame
-      setTimeout(() => requestAnimationFrame(loop), frameDuration);
+      requestAnimationFrame(loop);
     };
-    
+
+
     sprites.onload = () => {
       changeScreen(screens.start);
       requestAnimationFrame(loop);
