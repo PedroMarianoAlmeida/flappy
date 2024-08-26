@@ -16,7 +16,7 @@ import SoundBackground from '../sounds/Sound_Background.mp3';
 
 const Game = () => {
   const canvasRef = useRef(null);
-  const [canvasSize, setCanvasSize] = useState({ width: 431, height: 600 });
+  const [canvasSize, setCanvasSize] = useState({ width: Math.min(window.innerWidth, 431), height: 600 });
   const { t } = useTranslation();
   const sprites = new Image();
   sprites.src = spriteSheet;
@@ -37,8 +37,6 @@ const Game = () => {
       audio.pause(); // Pausa a música de fundo quando o componente é desmontado
     };
   }, []);
-
-  
 
   const { setScore } = useContext(GameContext);
 
@@ -412,14 +410,24 @@ const Game = () => {
       }
     });
 
+    const handleResize = () => {
+      setCanvasSize({
+        width: Math.min(window.innerWidth, 431),
+        height: 600
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
       soundBackground.current.pause(); // Pausa a música de fundo quando o componente é desmontado
+      window.removeEventListener('resize', handleResize);
     };
   }, [canvasSize, setScore]);
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">
-      <canvas ref={canvasRef} className="border-2 bg-[#70c5ce] "></canvas>
+      <canvas ref={canvasRef} className="border-2 bg-[#70c5ce]"></canvas>
     </div>
   );
 };
