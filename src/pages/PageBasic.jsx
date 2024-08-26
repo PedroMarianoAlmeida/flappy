@@ -13,7 +13,7 @@ const PageBasic = () => {
                     flexGrow: 1, 
                     p: 0,
                     border: "none",
-                    marginTop: window.innerWidth < 431 ? "3.5em": "2em", 
+                     marginTop: window.innerWidth < 431 ? "3.5em": "2em", 
                 }}
             >
                 <Outlet />

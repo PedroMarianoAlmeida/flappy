@@ -1,5 +1,4 @@
 const languageBrowser = (navigator.language || navigator.userLanguage).toLowerCase();
-
 export const renderMessageGamerOver = (canvas, ctx, sprites) => {
     const messageGamerOver = {
         spriteX: 118,
@@ -130,7 +129,7 @@ export const renderButtons = (canvas, ctx) => {
             ctx.font = fontSizeButton;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(languageBrowser === "pt-br" ? "Compartilhar": 'To share', this.x + this.width / 2, this.y + this.height / 2);
+            ctx.fillText(languageBrowser === "pt-br" ? "Compartilhar": 'Share', this.x + this.width / 2, this.y + this.height / 2);
         },
         isClicked(x, y) {
             return x >= this.x && x <= this.x + this.width &&

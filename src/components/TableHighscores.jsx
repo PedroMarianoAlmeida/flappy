@@ -37,7 +37,11 @@ export default function TableHighscores() {
             sx={{ backgroundColor: "transparent" }}
             component={Paper}
         >
-            <Table aria-label="simple table">
+            <Table aria-label="simple table"
+                sx={{ height: "auto",
+                    marginBottom: 3
+                }}
+            >
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ color: "#fff", fontSize: 18, fontWeight: "bold" }} align="center">
@@ -54,7 +58,7 @@ export default function TableHighscores() {
                 <TableBody>
                     {data.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={3} align="center">{t("No data available")}</TableCell>
+                            <TableCell  sx={{ color: "#fff"}}colSpan={3} align="center">{t("No data available")}</TableCell>
                         </TableRow>
                     ) : (
                         data.map((user, index) => (

@@ -2,5 +2,5 @@
 
 body {
   font-family: 'Press Start 2P', cursive; /* Fonte global */
-
+  max-height: 100vh;
 }

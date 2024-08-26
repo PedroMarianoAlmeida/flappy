@@ -14,6 +14,8 @@ import SoundWings from '../sounds/sfx_wing.mp3';
 import SoubndSwooshing from '../sounds/sfx_swooshing.mp3';
 import SoundBackground from '../sounds/Sound_Background.mp3';
 
+import Logo from '../assets/flappy-bird.svg'
+
 const Game = () => {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: Math.min(window.innerWidth, 431), height: 600 });
@@ -251,7 +253,7 @@ const Game = () => {
           ctx.strokeStyle = "black";
           ctx.lineWidth = 8;
           ctx.textAlign = "center";
-          ctx.strokeText(`${this.scores}`, canvas.width / 2, (canvas.height - 470) /2);
+          ctx.strokeText(`${this.scores}`, canvas.width / 2, (canvas.height - 470) / 2);
           ctx.fillStyle = "white";
           ctx.fillText(`${this.scores}`, canvas.width / 2, (canvas.height - 470) / 2);
         },
@@ -328,7 +330,7 @@ const Game = () => {
           globais.scoreboard = renderScoreboard(canvas, ctx, sprites);
           globais.medal = createMedal(canvas, scorePassedPipes, ctx, sprites, t);
           globais.scoreGameOver = currentScore(canvas, ctx, scorePassedPipes, t);
-          
+
           // Atualiza o high score global se a pontuação atual for maior
           if (scorePassedPipes > globalScores.highScore) {
             globalScores.highScore = scorePassedPipes;
@@ -426,8 +428,14 @@ const Game = () => {
   }, [canvasSize, setScore]);
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      <canvas ref={canvasRef} className="border-2 bg-[#70c5ce]"></canvas>
+    <div
+      className={`w-full h-auto flex items-center flex-col  absolute top-16 ${window.innerWidth >= 600 ? 'overflow-hidden' : 'overflow-x-auto overflow-y-hidden'
+        }`}
+    >
+      {window.innerWidth < 600 && (
+        <img src={Logo} alt="Logo-flappybird" className="w-48 pt-3" />
+      )}
+        <canvas ref={canvasRef} className={`border-2 bg-[#70c5ce] ${window.innerWidth >= 600 ? 'mt-7': 'mt-3'}`}></canvas>
     </div>
   );
 };
