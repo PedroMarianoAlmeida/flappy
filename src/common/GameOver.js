@@ -231,9 +231,10 @@ export const createMedal = (canvas, scorePassedPipes, ctx, sprites) => {
       ],
       width: 44,
       height: 44,
-     
-      x: canvas.width * 0.75 - 195, // 75% da largura do canvas menos metade da largura da medalha
-      y: canvas.height * 0.5 - 57, // 50% da altura do canvas menos metade da altura da medalha
+      
+      x: canvas.width * 0.35 - 22, 
+      y: canvas.height * 0.44 - 22, 
+      
       draw() {
         const index = Math.min(Math.floor(scorePassedPipes / 10), this.type.length - 1); // Define o tipo de medalha
         const { spriteX, spriteY } = this.type[index];
@@ -252,59 +253,52 @@ export const createMedal = (canvas, scorePassedPipes, ctx, sprites) => {
     };
     return medal;
   };
-
+  
   export const currentScore = (canvas, ctx, bestScore) => {
-    const bestScoreGameOver = {
-            spriteX: 118,
-            spriteY: 272,
-            width: 188,
-            height: 38,
-            x: (canvas.width - 188) / 2,
-            y: canvas.height / 4, 
-            draw() {
-              
-              ctx.font = 'bold 15px "Press Start 2P"'; 
-              ctx.textAlign = 'center'; 
-              ctx.textBaseline = 'middle'; 
-              
-              ctx.strokeStyle = "black";
-              ctx.lineWidth = 5;
-              ctx.strokeText(bestScore, 290, 243);
-              
-              
-              ctx.fillStyle = '#FFFFFF'; 
-              ctx.fillText(bestScore, 290, 243);
-            }
-          };
-
-    return bestScoreGameOver;
-};
-
-
-export const bestScore = (canvas, ctx, score) => {
-    const bestScoreGameOver = {
-            spriteX: 118,
-            spriteY: 272,
-            width: 188,
-            height: 38,
-            x: 20,
-            y: 300, 
-            draw() {
-              
-              ctx.font = 'bold 15px "Press Start 2P"'; 
-              ctx.textAlign = 'center'; 
-              ctx.textBaseline = 'middle'; 
-              
-              
-              ctx.strokeStyle = "black";
-              ctx.lineWidth = 5;
-              ctx.strokeText(score, 290, 283);
-              
-              
-              ctx.fillStyle = '#FFFFFF'; 
-              ctx.fillText(score, 290, 283);
-            }
-          };
-
-    return bestScoreGameOver;
-};
+    const currentScoreDisplay = {
+      width: 188,
+      height: 38,
+      x: canvas.width * 0.5 - 20, 
+      y: canvas.height * 0.37,     
+      
+      draw() {
+        ctx.font = 'bold 15px "Press Start 2P"'; 
+        ctx.textAlign = 'center'; 
+        ctx.textBaseline = 'middle'; 
+        
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 5;
+        ctx.strokeText(bestScore, this.x + 94, this.y + 19);
+        
+        ctx.fillStyle = '#FFFFFF'; 
+        ctx.fillText(bestScore, this.x + 94, this.y + 19);
+      }
+    };
+  
+    return currentScoreDisplay;
+  };
+  
+  export const bestScore = (canvas, ctx, score) => {
+    const bestScoreDisplay = {
+      width: 188,
+      height: 38,
+      x: canvas.width * 0.5 - 20, // Centralizado horizontalmente
+      y: canvas.height * 0.44,     // 40% da altura do canvas
+      
+      draw() {
+        ctx.font = 'bold 15px "Press Start 2P"'; 
+        ctx.textAlign = 'center'; 
+        ctx.textBaseline = 'middle'; 
+        
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 5;
+        ctx.strokeText(score, this.x + 94, this.y + 19);
+        
+        ctx.fillStyle = '#FFFFFF'; 
+        ctx.fillText(score, this.x + 94, this.y + 19);
+      }
+    };
+  
+    return bestScoreDisplay;
+  };
+  
