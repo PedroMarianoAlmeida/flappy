@@ -10,7 +10,7 @@ import "./i18n";
 import ReactGA from 'react-ga4';
 
 // Substitua pelo seu ID de medição do Google Analytics 4
-const GA_MEASUREMENT_ID = 'G-5N3WGMEJGK';
+const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 // Inicialize o Google Analytics
 ReactGA.initialize(GA_MEASUREMENT_ID);
