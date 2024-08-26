@@ -397,6 +397,7 @@ const Game = () => {
     const loop = (currentTime) => {
       const deltaTime = (currentTime - lastFrameTime) / 1000; // Tempo em segundos
       
+      // Atualize a lógica do jogo com base no deltaTime
       if (deltaTime >= frameDuration / 1000) {
         lastFrameTime = currentTime;
         
@@ -408,7 +409,8 @@ const Game = () => {
         frames += 1;
       }
     
-      requestAnimationFrame(loop);
+      // Solicite o próximo frame
+      setTimeout(() => requestAnimationFrame(loop), frameDuration);
     };
     
     sprites.onload = () => {
