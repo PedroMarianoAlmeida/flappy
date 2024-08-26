@@ -14,8 +14,6 @@ import SoundWings from '../sounds/sfx_wing.mp3';
 import SoubndSwooshing from '../sounds/sfx_swooshing.mp3';
 import SoundBackground from '../sounds/Sound_Background.mp3';
 
-import Logo from '../assets/flappy-bird.svg'
-
 const Game = () => {
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: Math.min(window.innerWidth, 431), height: 600 });
@@ -51,11 +49,16 @@ const Game = () => {
   let gameOver = false; // Flag para verificar se o jogo acabou
 
   useEffect(() => {
+
     let frames = 0;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     canvas.width = canvasSize.width;
     canvas.height = canvasSize.height;
+
+    const fps = 100;
+    const frameDuration = 1000 / fps;
+    let lastFrameTime = 0;
 
     const collision = (flappybird, floor) => {
       const flappybirdY = flappybird.y + flappybird.height;
@@ -391,19 +394,25 @@ const Game = () => {
       }
     };
 
-    const loop = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      screenActive.draw();
-      if (screenActive.update) {
-        screenActive.update();
+    const loop = (currentTime) => {
+      const deltaTime = currentTime - lastFrameTime;
+  
+      if (deltaTime >= frameDuration) {
+        lastFrameTime = currentTime;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        screenActive.draw();
+        if (screenActive.update) {
+          screenActive.update();
+        }
+        frames += 1;
       }
-      frames += 1;
+  
       requestAnimationFrame(loop);
     };
-
     sprites.onload = () => {
       changeScreen(screens.start);
-      loop();
+      requestAnimationFrame(loop);
     };
 
     canvas.addEventListener('click', (event) => {
@@ -429,12 +438,9 @@ const Game = () => {
 
   return (
     <div
-      className={`w-full h-auto flex items-center flex-col  absolute top-16 ${window.innerWidth >= 600 ? 'overflow-hidden' : 'overflow-x-auto overflow-y-hidden'
+      className={`w-full h-auto flex items-center flex-col absolute top-16 ${window.innerWidth >= 600 ? 'overflow-hidden justify-center' : 'overflow-x-auto overflow-y-hidden'
         }`}
     >
-      {window.innerWidth < 600 && (
-        <img src={Logo} alt="Logo-flappybird" className="w-48 pt-3" />
-      )}
         <canvas ref={canvasRef} className={`border-2 bg-[#70c5ce] ${window.innerWidth >= 600 ? 'mt-7': 'mt-3'}`}></canvas>
     </div>
   );
