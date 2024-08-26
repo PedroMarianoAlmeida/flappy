@@ -7,40 +7,36 @@ import { BrowserRouter, useLocation } from 'react-router-dom';
 import { FirebaseProvider } from './context/FirebaseContext.jsx';
 import { GameProvider } from './context/GameContext.jsx';
 import "./i18n";
+import ReactGA from 'react-ga4';
 
 // Substitua pelo seu ID de medição do Google Analytics 4
 const GA_MEASUREMENT_ID = 'G-5N3WGMEJGK';
 
-// Função para carregar o script do Google Analytics e configurar o gtag
-const loadGoogleAnalytics = () => {
-  const script = document.createElement('script');
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-  script.async = true;
-  document.head.appendChild(script);
+// Inicialize o Google Analytics
+ReactGA.initialize(GA_MEASUREMENT_ID);
 
-  script.onload = () => {
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', GA_MEASUREMENT_ID);
-  };
-};
-
+// Função para enviar visualização de página
 const PageViewTracker = () => {
   const location = useLocation();
   
   useEffect(() => {
-    if (window.gtag) {
-      window.gtag('config', GA_MEASUREMENT_ID, {
-        page_path: location.pathname + location.search,
-      });
-    }
+    ReactGA.send({ hitType: "pageview", page: location.pathname + location.search, title: document.title });
   }, [location]);
 
   return null;
 };
 
-loadGoogleAnalytics(); // Carrega e configura o Google Analytics
+// // Enviar um evento personalizado
+// const sendCustomEvent = () => {
+//   ReactGA.event({
+//     category: 'Category Name',
+//     action: 'Action Name',
+//     label: 'Label Name', // opcional
+//     value: 99, // opcional, deve ser um número
+//     nonInteraction: true, // opcional, true/false
+//     transport: 'xhr', // opcional, 'beacon', 'xhr' ou 'image'
+//   });
+// };
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

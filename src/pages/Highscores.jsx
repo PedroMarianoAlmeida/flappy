@@ -15,7 +15,7 @@ const Highscores = () => {
     }, [score]);
 
     return (
-        <div className="flex flex-col w-full items-center">
+        <div className="flex flex-col w-full items-center mt-7">
             {scoreReal !== 0 ? (
                 <SaveScore score={scoreReal} />
             ) : (

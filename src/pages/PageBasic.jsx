@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 
 const PageBasic = () => {
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }} className="overflow-hidden">
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }} className="overflow-x-hidden">
             <Navbar />
             <Box
                 className='bg-slate-800 min-h-screen:'
