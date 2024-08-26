@@ -26,7 +26,7 @@ const PageViewTracker = () => {
   return null;
 };
 
-// // Enviar um evento personalizado
+// Enviar um evento personalizado (descomente e ajuste conforme necessário)
 // const sendCustomEvent = () => {
 //   ReactGA.event({
 //     category: 'Category Name',
