@@ -1,16 +1,16 @@
 // Importar funções necessárias do Firebase
+
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "firebase/firestore";
-
 // Configuração do Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBWBcU3YHRfmTLs1nWPGp2MggQhaHy-a04",
-  authDomain: "passarinho-5130c.firebaseapp.com",
-  projectId: "passarinho-5130c",
-  storageBucket: "passarinho-5130c.appspot.com",
-  messagingSenderId: "451993853101",
-  appId: "1:451993853101:web:b06e7761b6107c4f757a24",
-  measurementId: "G-SSRC9QQK13"
+  apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Inicializar o Firebase
