@@ -9,13 +9,14 @@ const GameProvider = ({ children }) => {
     const sprites = new Image();
     sprites.src = spriteSheet;
 
-    // Adicione um estado para armazenar a pontuação
+    // Adicione um estado para armazenar a pontuação e a melhor pontuação
     const [score, setScore] = useState(0);
+    const [bestScore, setBestScore] = useState(0);
 
-    const collision = (flappybird, floor) => {
-        const flappybirdY = flappybird.y + flappybird.height;
-        const floorY = floor.y;
-        return flappybirdY >= floorY;
+    const updateBestScore = (newScore) => {
+        if (newScore > bestScore) {
+            setBestScore(newScore);
+        }
     };
 
     return (
@@ -23,9 +24,10 @@ const GameProvider = ({ children }) => {
             value={{
                 sprites,
                 canvasRef,
-                collision,
-                score, // Disponibilize a pontuação no contexto
-                setScore, // Disponibilize a função para atualizar a pontuação no contexto
+                score, 
+                setScore,
+                bestScore,
+                updateBestScore
             }}
         >
             {children}

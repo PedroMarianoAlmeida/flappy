@@ -253,8 +253,8 @@ export const createMedal = (canvas, scorePassedPipes, ctx, sprites) => {
     return medal;
   };
 
-  export const currentScore = (canvas, ctx, score) => {
-    const scoreGameOver = {
+  export const currentScore = (canvas, ctx, bestScore) => {
+    const bestScoreGameOver = {
             spriteX: 118,
             spriteY: 272,
             width: 188,
@@ -267,17 +267,44 @@ export const createMedal = (canvas, scorePassedPipes, ctx, sprites) => {
               ctx.textAlign = 'center'; 
               ctx.textBaseline = 'middle'; 
               
-              
               ctx.strokeStyle = "black";
               ctx.lineWidth = 5;
-              ctx.strokeText(score, 290, 243);
+              ctx.strokeText(bestScore, 290, 243);
               
               
               ctx.fillStyle = '#FFFFFF'; 
-              ctx.fillText(score, 290, 243);
+              ctx.fillText(bestScore, 290, 243);
             }
           };
 
-    return scoreGameOver;
+    return bestScoreGameOver;
 };
 
+
+export const bestScore = (canvas, ctx, score) => {
+    const bestScoreGameOver = {
+            spriteX: 118,
+            spriteY: 272,
+            width: 188,
+            height: 38,
+            x: 20,
+            y: 300, 
+            draw() {
+              
+              ctx.font = 'bold 15px "Press Start 2P"'; 
+              ctx.textAlign = 'center'; 
+              ctx.textBaseline = 'middle'; 
+              
+              
+              ctx.strokeStyle = "black";
+              ctx.lineWidth = 5;
+              ctx.strokeText(score, 290, 283);
+              
+              
+              ctx.fillStyle = '#FFFFFF'; 
+              ctx.fillText(score, 290, 283);
+            }
+          };
+
+    return bestScoreGameOver;
+};

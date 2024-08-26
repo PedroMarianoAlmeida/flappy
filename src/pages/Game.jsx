@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import spriteSheet from '../assets/sheet.png';
 import { renderBackground } from '../common/Background';
 import { renderHomeScreen, renderMessageHomeScreen } from '../common/HomeScreen';
-import { createMedal, renderButtons, renderMessageGamerOver, renderScoreboard, currentScore } from '../common/GameOver';
+import { createMedal, renderButtons, renderMessageGamerOver, renderScoreboard, currentScore, bestScore } from '../common/GameOver';
 import { renderFloor } from '../common/Floor';
 import { GameContext } from '../context/GameContext';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +37,8 @@ const Game = () => {
       audio.pause(); // Pausa a música de fundo quando o componente é desmontado
     };
   }, []);
+
+  
 
   const { setScore } = useContext(GameContext);
 
@@ -328,10 +330,12 @@ const Game = () => {
           globais.scoreboard = renderScoreboard(canvas, ctx, sprites);
           globais.medal = createMedal(canvas, scorePassedPipes, ctx, sprites, t);
           globais.scoreGameOver = currentScore(canvas, ctx, scorePassedPipes, t);
+          
           // Atualiza o high score global se a pontuação atual for maior
           if (scorePassedPipes > globalScores.highScore) {
             globalScores.highScore = scorePassedPipes;
           }
+          globais.bestScoreGameover = bestScore(canvas, ctx, globalScores.highScore)
         },
         draw() {
           globais.background.draw();
@@ -343,6 +347,7 @@ const Game = () => {
           globais.scoreboard.draw();
           globais.medal.draw();
           globais.scoreGameOver.draw();
+          globais.bestScoreGameover.draw()
         },
         update() {
           // Atualiza apenas o que for necessário
@@ -413,7 +418,7 @@ const Game = () => {
   }, [canvasSize, setScore]);
 
   return (
-    <div className="w-auto h-screen flex items-center justify-center">
+    <div className="w-screen h-screen flex items-center justify-center">
       <canvas ref={canvasRef} className="border-2 bg-[#70c5ce] "></canvas>
     </div>
   );
