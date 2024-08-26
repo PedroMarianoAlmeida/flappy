@@ -7,29 +7,40 @@ import { BrowserRouter, useLocation } from 'react-router-dom';
 import { FirebaseProvider } from './context/FirebaseContext.jsx';
 import { GameProvider } from './context/GameContext.jsx';
 import "./i18n";
-import { GA4React } from 'react-ga4';
 
 // Substitua pelo seu ID de medição do Google Analytics 4
-const ga4react = new GA4React('G-5N3WGMEJGK'); 
+const GA_MEASUREMENT_ID = 'G-5N3WGMEJGK';
+
+// Função para carregar o script do Google Analytics e configurar o gtag
+const loadGoogleAnalytics = () => {
+  const script = document.createElement('script');
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+  script.async = true;
+  document.head.appendChild(script);
+
+  script.onload = () => {
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', GA_MEASUREMENT_ID);
+  };
+};
 
 const PageViewTracker = () => {
   const location = useLocation();
   
   useEffect(() => {
-    if (ga4react.ga) {
-      ga4react.pageview(location.pathname + location.search);
+    if (window.gtag) {
+      window.gtag('config', GA_MEASUREMENT_ID, {
+        page_path: location.pathname + location.search,
+      });
     }
   }, [location]);
 
   return null;
 };
 
-// Inicialize o Google Analytics
-ga4react.initialize().then(() => {
-  console.log('GA4 Initialized');
-}).catch((err) => {
-  console.error('GA4 Initialization Error:', err);
-});
+loadGoogleAnalytics(); // Carrega e configura o Google Analytics
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
