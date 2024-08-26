@@ -395,21 +395,22 @@ const Game = () => {
     };
 
     const loop = (currentTime) => {
-      const deltaTime = currentTime - lastFrameTime;
-  
-      if (deltaTime >= frameDuration) {
+      const deltaTime = (currentTime - lastFrameTime) / 1000; // Tempo em segundos
+      
+      if (deltaTime >= frameDuration / 1000) {
         lastFrameTime = currentTime;
         
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         screenActive.draw();
         if (screenActive.update) {
-          screenActive.update();
+          screenActive.update(deltaTime);
         }
         frames += 1;
       }
-  
+    
       requestAnimationFrame(loop);
     };
+    
     sprites.onload = () => {
       changeScreen(screens.start);
       requestAnimationFrame(loop);
