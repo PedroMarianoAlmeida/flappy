@@ -72,6 +72,25 @@ const Game = () => {
     let lastFrameTime = 0;
     let accumulatedTime = 0;
 
+    const loop = (currentTime) => {
+      const deltaTime = currentTime - lastFrameTime;
+      lastFrameTime = currentTime;
+
+      accumulatedTime += deltaTime;
+
+      while (accumulatedTime >= frameDuration) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        screenActive.draw();
+        if (screenActive.update) {
+          screenActive.update(frameDuration / 1000); // Atualize com o deltaTime em segundos
+        }
+        accumulatedTime -= frameDuration;
+        frames += 1;
+      }
+
+      requestAnimationFrame(loop);
+    };
+
     const collision = (flappybird, floor) => {
       const flappybirdY = flappybird.y + flappybird.height;
       const floorY = floor.y;
@@ -438,25 +457,6 @@ const Game = () => {
       if (screenActive.initialize) {
         screenActive.initialize();
       }
-    };
-
-    const loop = (currentTime) => {
-      const deltaTime = currentTime - lastFrameTime;
-      lastFrameTime = currentTime;
-
-      accumulatedTime += deltaTime;
-
-      while (accumulatedTime >= frameDuration) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        screenActive.draw();
-        if (screenActive.update) {
-          screenActive.update(frameDuration / 1000); // Atualize com o deltaTime em segundos
-        }
-        accumulatedTime -= frameDuration;
-        frames += 1;
-      }
-
-      requestAnimationFrame(loop);
     };
 
     sprites.onload = () => {
