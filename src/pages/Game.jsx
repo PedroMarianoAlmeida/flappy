@@ -45,7 +45,7 @@ const Game = () => {
     const audio = soundBackground.current;
     audio.volume = 0.3;
     audio.loop = true;
-    audio.play();
+    // audio.play();
     return () => {
       audio.pause(); // Pausa a música de fundo quando o componente é desmontado
     };
