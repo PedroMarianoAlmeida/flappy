@@ -77,14 +77,15 @@ const Game = () => {
       lastFrameTime = currentTime;
 
       accumulatedTime += deltaTime;
+      const velocity = 25;
 
-      while (accumulatedTime >= frameDuration) {
+      if (accumulatedTime >= velocity) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         screenActive.draw();
         if (screenActive.update) {
-          screenActive.update(frameDuration / 1000); // Atualize com o deltaTime em segundos
+          screenActive.update(accumulatedTime / 1000); // Atualize com o deltaTime em segundos
         }
-        accumulatedTime -= frameDuration;
+        accumulatedTime -= velocity;
         frames += 1;
       }
 
