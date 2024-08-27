@@ -1,22 +1,35 @@
-import { useRef, useEffect, useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import spriteSheet from '../assets/sheet.png';
-import { renderBackground } from '../common/Background';
-import { renderHomeScreen, renderMessageHomeScreen } from '../common/HomeScreen';
-import { createMedal, renderButtons, renderMessageGamerOver, renderScoreboard, currentScore, bestScore } from '../common/GameOver';
-import { renderFloor } from '../common/Floor';
-import { GameContext } from '../context/GameContext';
-import { useTranslation } from 'react-i18next';
+import { useRef, useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import spriteSheet from "../assets/sheet.png";
+import { renderBackground } from "../common/Background";
+import {
+  renderHomeScreen,
+  renderMessageHomeScreen,
+} from "../common/HomeScreen";
+import {
+  createMedal,
+  renderButtons,
+  renderMessageGamerOver,
+  renderScoreboard,
+  currentScore,
+  bestScore,
+} from "../common/GameOver";
+import { renderFloor } from "../common/Floor";
+import { GameContext } from "../context/GameContext";
+import { useTranslation } from "react-i18next";
 // áudios
-import SomColison from '../sounds/soco.mp3';
-import SoundPont from '../sounds/sfx_point.mp3';
-import SoundWings from '../sounds/sfx_wing.mp3';
-import SoubndSwooshing from '../sounds/sfx_swooshing.mp3';
-import SoundBackground from '../sounds/Sound_Background.mp3';
+import SomColison from "../sounds/soco.mp3";
+import SoundPont from "../sounds/sfx_point.mp3";
+import SoundWings from "../sounds/sfx_wing.mp3";
+import SoubndSwooshing from "../sounds/sfx_swooshing.mp3";
+import SoundBackground from "../sounds/Sound_Background.mp3";
 
 const Game = () => {
   const canvasRef = useRef(null);
-  const [canvasSize, setCanvasSize] = useState({ width: Math.min(window.innerWidth, 431), height: 600 });
+  const [canvasSize, setCanvasSize] = useState({
+    width: Math.min(window.innerWidth, 431),
+    height: 600,
+  });
   const { t } = useTranslation();
   const sprites = new Image();
   sprites.src = spriteSheet;
@@ -43,16 +56,15 @@ const Game = () => {
   // Objeto global para armazenar a pontuação
   const globalScores = {
     highScore: 0,
-    currentScore: 0
+    currentScore: 0,
   };
   let scorePassedPipes = 0; // Inicialização da pontuação
   let gameOver = false; // Flag para verificar se o jogo acabou
 
   useEffect(() => {
-
     let frames = 0;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     canvas.width = canvasSize.width;
     canvas.height = canvasSize.height;
     const targetFPS = 60;
@@ -70,7 +82,7 @@ const Game = () => {
       const wings = [
         { spriteX: 312, spriteY: 230 },
         { spriteX: 312, spriteY: 256 },
-        { spriteX: 312, spriteY: 282 }
+        { spriteX: 312, spriteY: 282 },
       ];
 
       return {
@@ -186,11 +198,11 @@ const Game = () => {
 
             pair.pipeSky = {
               x: pipeSkyX,
-              y: pipeSkyY
+              y: pipeSkyY,
             };
             pair.pipeFloor = {
               x: pipeFloorX,
-              y: pipeFloorY
+              y: pipeFloorY,
             };
           });
         },
@@ -256,13 +268,21 @@ const Game = () => {
           ctx.strokeStyle = "black";
           ctx.lineWidth = 8;
           ctx.textAlign = "center";
-          ctx.strokeText(`${this.scores}`, canvas.width / 2, (canvas.height - 470) / 2);
+          ctx.strokeText(
+            `${this.scores}`,
+            canvas.width / 2,
+            (canvas.height - 470) / 2
+          );
           ctx.fillStyle = "white";
-          ctx.fillText(`${this.scores}`, canvas.width / 2, (canvas.height - 470) / 2);
+          ctx.fillText(
+            `${this.scores}`,
+            canvas.width / 2,
+            (canvas.height - 470) / 2
+          );
         },
         update() {
           this.scores = scorePassedPipes;
-        }
+        },
       };
       return scoreObj;
     };
@@ -278,7 +298,12 @@ const Game = () => {
           globais.floor = renderFloor(canvas, ctx, sprites);
           globais.pipes = createPipes();
           globais.homeScreen = renderHomeScreen(canvas, ctx, sprites);
-          globais.messageHomeScreen = renderMessageHomeScreen(canvas, ctx, sprites, globais.homeScreen);
+          globais.messageHomeScreen = renderMessageHomeScreen(
+            canvas,
+            ctx,
+            sprites,
+            globais.homeScreen
+          );
           globais.score = createScore();
           scorePassedPipes = 0;
           gameOver = false; // Reseta o game over quando inicia um novo jogo
@@ -328,17 +353,36 @@ const Game = () => {
           globais.flappybird = newFlappyBird();
           globais.background = renderBackground(canvas, ctx, sprites);
           globais.floor = renderFloor(canvas, ctx, sprites);
-          globais.messageGamerOver = renderMessageGamerOver(canvas, ctx, sprites);
+          globais.messageGamerOver = renderMessageGamerOver(
+            canvas,
+            ctx,
+            sprites
+          );
           globais.renderButton = renderButtons(canvas, ctx, sprites, t);
           globais.scoreboard = renderScoreboard(canvas, ctx, sprites);
-          globais.medal = createMedal(canvas, scorePassedPipes, ctx, sprites, t);
-          globais.scoreGameOver = currentScore(canvas, ctx, scorePassedPipes, t);
+          globais.medal = createMedal(
+            canvas,
+            scorePassedPipes,
+            ctx,
+            sprites,
+            t
+          );
+          globais.scoreGameOver = currentScore(
+            canvas,
+            ctx,
+            scorePassedPipes,
+            t
+          );
 
           // Atualiza o high score global se a pontuação atual for maior
           if (scorePassedPipes > globalScores.highScore) {
             globalScores.highScore = scorePassedPipes;
           }
-          globais.bestScoreGameover = bestScore(canvas, ctx, globalScores.highScore)
+          globais.bestScoreGameover = bestScore(
+            canvas,
+            ctx,
+            globalScores.highScore
+          );
         },
         draw() {
           globais.background.draw();
@@ -350,7 +394,7 @@ const Game = () => {
           globais.scoreboard.draw();
           globais.medal.draw();
           globais.scoreGameOver.draw();
-          globais.bestScoreGameover.draw()
+          globais.bestScoreGameover.draw();
         },
         update() {
           // Atualiza apenas o que for necessário
@@ -371,17 +415,19 @@ const Game = () => {
     };
 
     const saveScore = () => {
-      navigate('/highscores', {
-        state: { score: scorePassedPipes }
+      navigate("/highscores", {
+        state: { score: scorePassedPipes },
       });
     };
 
     const shareScore = () => {
       if (navigator.share) {
-        navigator.share({
-          title: 'Minha Pontuação no Flappy Bird',
-          text: `Minha pontuação é ${scorePassedPipes}!`,
-        }).catch(console.error);
+        navigator
+          .share({
+            title: "Minha Pontuação no Flappy Bird",
+            text: `Minha pontuação é ${scorePassedPipes}!`,
+          })
+          .catch(console.error);
       } else {
         alert(`Minha pontuação é ${scorePassedPipes}!`);
       }
@@ -397,9 +443,9 @@ const Game = () => {
     const loop = (currentTime) => {
       const deltaTime = currentTime - lastFrameTime;
       lastFrameTime = currentTime;
-    
+
       accumulatedTime += deltaTime;
-    
+
       while (accumulatedTime >= frameDuration) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         screenActive.draw();
@@ -409,17 +455,16 @@ const Game = () => {
         accumulatedTime -= frameDuration;
         frames += 1;
       }
-    
+
       requestAnimationFrame(loop);
     };
-
 
     sprites.onload = () => {
       changeScreen(screens.start);
       requestAnimationFrame(loop);
     };
 
-    canvas.addEventListener('click', (event) => {
+    canvas.addEventListener("click", (event) => {
       if (screenActive.click) {
         screenActive.click(event);
       }
@@ -428,24 +473,32 @@ const Game = () => {
     const handleResize = () => {
       setCanvasSize({
         width: Math.min(window.innerWidth, 431),
-        height: 600
+        height: 600,
       });
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       soundBackground.current.pause(); // Pausa a música de fundo quando o componente é desmontado
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, [canvasSize, setScore]);
 
   return (
     <div
-      className={`w-full h-auto flex items-center flex-col absolute top-16 ${window.innerWidth >= 600 ? 'overflow-hidden justify-center' : 'overflow-x-auto overflow-y-hidden'
-        }`}
+      className={`w-full h-auto flex items-center flex-col absolute top-16 ${
+        window.innerWidth >= 600
+          ? "overflow-hidden justify-center"
+          : "overflow-x-auto overflow-y-hidden"
+      }`}
     >
-        <canvas ref={canvasRef} className={`border-2 bg-[#70c5ce] ${window.innerWidth >= 600 ? 'mt-7': 'mt-3'}`}></canvas>
+      <canvas
+        ref={canvasRef}
+        className={`border-2 bg-[#70c5ce] ${
+          window.innerWidth >= 600 ? "mt-7" : "mt-3"
+        }`}
+      ></canvas>
     </div>
   );
 };
